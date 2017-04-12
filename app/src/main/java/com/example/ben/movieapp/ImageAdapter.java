@@ -16,10 +16,6 @@ import com.squareup.picasso.Picasso;
 import java.net.URI;
 import java.util.List;
 
-/**
- * Created by ben on 1/19/17.
- */
-
 public class ImageAdapter extends ArrayAdapter<MovieData> {
     private static final String LOG_TAG = ImageAdapter.class.getSimpleName();
 

@@ -1,5 +1,13 @@
 package com.example.ben.movieapp;
 
+/*
+* to add:
+* favorites (save to db)
+* link to rotten tomatoes, metacritic, wikipedia
+* ratings from those sources
+* accessibility (maybe): descriptions, titles
+*/
+
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

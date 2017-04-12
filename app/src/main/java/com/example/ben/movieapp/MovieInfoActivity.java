@@ -19,10 +19,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-/**
- * Created by ben on 1/23/17.
- */
-
 public class MovieInfoActivity extends ActionBarActivity {
 
     @Override

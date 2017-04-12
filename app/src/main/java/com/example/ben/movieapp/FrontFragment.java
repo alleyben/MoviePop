@@ -1,6 +1,5 @@
 package com.example.ben.movieapp;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
@@ -16,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.GridView;
 
 import org.json.JSONArray;
@@ -31,7 +29,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-
 /*
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
@@ -39,7 +36,8 @@ import java.util.ArrayList;
  * to handle interaction events.
  * Use the {@link FrontFragment#newInstance} factory method to
  * create an instance of this fragment.
- */
+ **/
+
 public class FrontFragment extends Fragment {
 
     private ImageAdapter mMovieAdapter;
