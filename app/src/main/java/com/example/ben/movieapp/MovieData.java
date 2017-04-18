@@ -1,7 +1,5 @@
 package com.example.ben.movieapp;
 
-import android.icu.text.DateFormat;
-import android.icu.text.SimpleDateFormat;
 import android.os.Parcel;
 import android.os.Parcelable;
 
