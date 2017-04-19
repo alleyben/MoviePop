@@ -12,7 +12,16 @@
 
     <string name="pref_sort_rating" translatable="false">top_rated</string>
 
+    <!--string name="pref_sort_new" translatable="false">new_releases</string>
+
+    <string name="pref_sort_saved" translatable="false">favorite_movies</string-->
+
     <string name="pref_sort_label_popularity">By Popularity</string>
 
     <string name="pref_sort_label_rating">By Rating</string>
+
+    <!--string name="pref_sort_label_new">New Releases</string>
+
+    <string name="pref_sort_Label_saved">Favorites</string-->
+
 </resources>
