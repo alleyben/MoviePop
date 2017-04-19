@@ -2,6 +2,8 @@ package com.example.ben.movieapp;
 
 /*
 * to add:
+* tabs to different lists rather than in settings
+* "about" selection in settings to attribute tmdb
 * favorites (save to db)
 * link to rotten tomatoes, metacritic, wikipedia
 * ratings from those sources
