@@ -82,6 +82,9 @@ public class FrontFragment extends Fragment {
                 case 1:
                     sortBy = "top_rated";
                     break;
+                case 2:
+                    sortBy = "upcoming";
+                    break;
             }
             fetchMovies.execute(sortBy);
             return true;
@@ -111,6 +114,8 @@ public class FrontFragment extends Fragment {
             case 1:
                 sortBy = "top_rated";
                 break;
+            case 2:
+                sortBy = "upcoming";
         }
         FetchMoviesTask fetchMovies = new FetchMoviesTask();
         fetchMovies.execute(sortBy);

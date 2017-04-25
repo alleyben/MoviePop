@@ -94,25 +94,29 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         //or get from param[0]
         String popularity = "popular";
         String rating = "top_rated";
+        String newReleases = "new_releases";
+        String upcoming = "upcoming";
+
         String sortBy = params[0];
 
         //check for wrong input
-        if (!sortBy.equals(popularity) && !sortBy.equals(rating)) {
+        if (!sortBy.equals(popularity) && !sortBy.equals(rating) && !sortBy.equals(upcoming)) {
             Log.e(LOG_TAG, "Incorrect input for sort type.\nCould not render movie data");
             return null;
         }
 
         try {
 
-            //sample url
+            //sample url:
             //http://api.themoviedb.org/3/movie/top_rated?api_key=<api key>
 
-            final String RESULTS_BASE_URL = "http://api.themoviedb.org/3/movie";
+            final String RESULTS_BASE_URL = "https://api.themoviedb.org/3/movie";
             final String API_KEY = "api_key";
 
             Uri builtUri = Uri.parse(RESULTS_BASE_URL).buildUpon()
                     .appendPath(sortBy)
                     .appendQueryParameter(API_KEY, BuildConfig.TMDB_API_KEY)
+                    .appendQueryParameter("region", "US")
                     .build();
 
             Log.v(LOG_TAG, builtUri.toString());

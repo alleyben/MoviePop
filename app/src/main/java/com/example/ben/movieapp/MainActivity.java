@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show this many pages
-            return 2;
+            return 3;
         }
 
         @Override
@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 case 1:
                     return "Highest Rated";
                 case 2:
-                    return "New Releases";
+                    return "Coming Soon";
                 case 3:
                     return "Favorites";
             }
