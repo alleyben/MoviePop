@@ -57,10 +57,10 @@ public class FrontFragment extends Fragment {
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt(ARG_TAB_NUMBER);
         }
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
     }
 
-    @Override
+    /*@Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_front_frag, menu);
     }
@@ -90,7 +90,7 @@ public class FrontFragment extends Fragment {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

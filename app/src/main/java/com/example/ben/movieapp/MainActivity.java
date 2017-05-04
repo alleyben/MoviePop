@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //TODO: change activity layout (more?)
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else if (id == R.id.action_about) {
+            startActivity(new Intent(this, AboutActivity.class));
             return true;
         }
 
