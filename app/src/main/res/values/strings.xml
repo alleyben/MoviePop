@@ -24,4 +24,6 @@
 
     <string name="pref_sort_Label_saved">Favorites</string-->
 
+    <string name="app_font">sans-serif</string>
+
 </resources>

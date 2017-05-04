@@ -92,7 +92,9 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
         //if statements to determine which are placed in uri?
         //or get from param[0]
+        // list pop by year
         String popularity = "popular";
+        //can't find analogous top_rated in discover uri mode, maybe eliminate, would not change much anyway
         String rating = "top_rated";
         String newReleases = "new_releases";
         String upcoming = "upcoming";
@@ -101,7 +103,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
         //check for wrong input
         if (!sortBy.equals(popularity) && !sortBy.equals(rating) && !sortBy.equals(upcoming)) {
-            Log.e(LOG_TAG, "Incorrect input for sort type.\nCould not render movie data");
+            Log.e(LOG_TAG, "Incorrect input for sort type. Could not render movie data");
             return null;
         }
 
