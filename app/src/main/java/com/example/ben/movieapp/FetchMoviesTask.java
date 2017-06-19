@@ -27,8 +27,9 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         final String TITLE = "title";
         final String OVERVIEW = "overview";
         final String POSTER_URL = "poster_path";
-        final String RATING = "vote_average";
+        final String SCORE = "vote_average";
         final String DATE = "release_date";
+        final String MOVIEID = "id";
 
 
         JSONObject movieJson = new JSONObject(movieJsonStr);
@@ -42,8 +43,9 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
             String movieTitle = movieInfo.getString(TITLE);
             String movieOverview = movieInfo.getString(OVERVIEW);
             String moviePosterUrl = movieInfo.getString(POSTER_URL);
-            String movieRating = movieInfo.getString(RATING);
+            String movieRating = movieInfo.getString(SCORE);
             String movieDate = movieInfo.getString(DATE);
+            String movieId = movieInfo.getString(MOVIEID);
             String splitter = "~#~";
 
             resultStrArr[i] = new StringBuilder(movieTitle)
@@ -55,11 +57,13 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                     .append(movieRating)
                     .append(splitter)
                     .append(movieDate)
+                    .append(splitter)
+                    .append(movieId)
                     .toString();
         }
 
-        for(String s : resultStrArr) {
-            Log.v(LOG_TAG, "Movie entry: " + s);
+        for(String str : resultStrArr) {
+            Log.v(LOG_TAG, "Movie entry: " + str);
         }
 
         return resultStrArr;
@@ -75,6 +79,9 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                 mMovieAdapter.add(new MovieData(arr));
             }
             //mMovieAdapter.addAll(Movieresult);
+            //create moviedata objects
+            //analyze parseable
+            //onPostExecute does not allow nested array
         }
     }
 

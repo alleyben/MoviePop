@@ -35,7 +35,7 @@ public class FrontFragment extends Fragment {
     private int mTabNumber;
     private ImageAdapter mMovieAdapter;
     private FetchMoviesTask fetchMovies;
-    // TODO: change "String" to image file... jpeg?
+    // TODO: change "String" to image file... bitmap --> bit array?
     // negative, string stays, url of image jpeg
 
 //    private OnFragmentInteractionListener mListener;

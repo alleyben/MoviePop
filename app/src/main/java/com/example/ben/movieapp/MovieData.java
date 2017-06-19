@@ -1,7 +1,10 @@
 package com.example.ben.movieapp;
 
+import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.example.ben.movieapp.data.DataContract;
 
 import java.util.Date;
 
@@ -12,6 +15,7 @@ class MovieData implements Parcelable{
     String posterPath;
     String avgScore;
     String date;
+    String movieId;
     String[] infoArr;
 
     public MovieData(String[] MovieDataArr){
@@ -20,6 +24,7 @@ class MovieData implements Parcelable{
         this.posterPath = MovieDataArr[2];
         this.avgScore = MovieDataArr[3];
         this.date = MovieDataArr[4];
+        this.movieId = MovieDataArr[5];
         this.infoArr = MovieDataArr;
     }
 
@@ -29,6 +34,7 @@ class MovieData implements Parcelable{
         posterPath = in.readString();
         avgScore = in.readString();
         date = in.readString();
+        movieId = in.readString();
     }
 
     public String dateToString() {
@@ -44,6 +50,20 @@ class MovieData implements Parcelable{
 
     public String toString() {return title;}
 
+    public ContentValues getMovieDataCV() {
+
+        ContentValues cv = new ContentValues();
+
+        cv.put(DataContract.FavoritesEntry.COLUMN_TITLE, title);
+        cv.put(DataContract.FavoritesEntry.COLUMN_OVERVIEW, overview);
+        cv.put(DataContract.FavoritesEntry.COLUMN_POSTER_URL, posterPath);
+        cv.put(DataContract.FavoritesEntry.COLUMN_SCORE, avgScore);
+        cv.put(DataContract.FavoritesEntry.COLUMN_DATE, date);
+        cv.put(DataContract.FavoritesEntry.COLUMN_MOVIE_ID, movieId);
+
+        return cv;
+    }
+
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
@@ -51,6 +71,7 @@ class MovieData implements Parcelable{
         parcel.writeString(posterPath);
         parcel.writeString(avgScore);
         parcel.writeString(date);
+        parcel.writeString(movieId);
     }
 
     public static final Parcelable.Creator<MovieData> CREATOR = new Parcelable.Creator<MovieData>() {

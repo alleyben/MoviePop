@@ -46,6 +46,12 @@
                 android:value=".MainActivity"/>
         </activity>
 
+        <provider
+            android:authorities="@string/content_authority"
+            android:name=".data.DataProvider"
+            android:exported="false"
+            android:syncable="true"/>
+
     </application>
 
 </manifest>

@@ -35,7 +35,8 @@ public class ImageAdapter extends ArrayAdapter<MovieData> {
         ImageView posterView =
                 (ImageView) convertView.findViewById(R.id.grid_item_poster_imagebtn);
 
-        //http://image.tmdb.org/t/p/w185/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
+        // sample url:
+        // http://image.tmdb.org/t/p/w185/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
         final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
         final String SIZE = "w342";
         final String POSTER_PATH = movieData.posterPath;
@@ -50,8 +51,6 @@ public class ImageAdapter extends ArrayAdapter<MovieData> {
         Picasso.with(super.getContext()).load(builtUri).into(posterView);
 
         return convertView;
-        //R.layout.grid_item_poster,
-        //        R.id.grid_item_poster_imagebtn,
     }
 
 }
