@@ -1,18 +1,20 @@
 package com.example.ben.movieapp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+
+import com.example.ben.movieapp.data.DataContract;
 
 import java.util.ArrayList;
 
@@ -25,7 +27,7 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  **/
 
-public class FrontFragment extends Fragment {
+public class FrontFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     /**
      * The fragment argument representing the section number for this
@@ -33,15 +35,32 @@ public class FrontFragment extends Fragment {
      */
     private static final String ARG_TAB_NUMBER = "tab_number";
     private int mTabNumber;
-    private ImageAdapter mMovieAdapter;
-    private FetchMoviesTask fetchMovies;
-    // TODO: change "String" to image file... bitmap --> bit array?
-    // negative, string stays, url of image jpeg
+    private MoviesAdapter mMovieAdapter;
+    private FavoritesAdapter mFavoritesAdapter;
+
+    private static final int FAVORITES_LOADER = 0;
+
+    private static final String[] FAVORITES_COLUMNS = {
+            DataContract.FavoritesEntry.COLUMN_MOVIE_ID,
+            DataContract.FavoritesEntry.COLUMN_TITLE,
+            DataContract.FavoritesEntry.COLUMN_OVERVIEW,
+            DataContract.FavoritesEntry.COLUMN_POSTER_URL,
+            DataContract.FavoritesEntry.COLUMN_SCORE,
+            DataContract.FavoritesEntry.COLUMN_DATE//,
+//            DataContract.FavoritesEntry.COLUMN_TRAILER_URL,
+//            DataContract.FavoritesEntry.COLUMN_RATING
+    };
+
+    static final int COL_MOVIE_ID = 0;
+    static final int COL_TITLE = 1;
+    static final int COL_OVERVIEW = 2;
+    static final int COL_POSTER_URL = 3;
+    static final int COL_SCORE = 4;
+    static final int COL_DATE = 5;
+//    static final int COL_TRAILER_URL = 6;
+//    static final int COL_RATING = 7;
 
 //    private OnFragmentInteractionListener mListener;
-
-    public FrontFragment() {
-    }
 
     public static FrontFragment newInstance(int tabNumber) {
         FrontFragment fragment = new FrontFragment();
@@ -97,7 +116,7 @@ public class FrontFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         mMovieAdapter =
-                new ImageAdapter(
+                new MoviesAdapter(
                         getActivity(),
                         new ArrayList<MovieData>());
 
@@ -116,25 +135,69 @@ public class FrontFragment extends Fragment {
                 break;
             case 2:
                 sortBy = "upcoming";
+                break;
+            case 3:
+                sortBy = "favorites";
+                break;
         }
-        FetchMoviesTask fetchMovies = new FetchMoviesTask();
-        fetchMovies.execute(sortBy);
 
-        gridView.setAdapter(mMovieAdapter);
+        if (sortBy.equals("favorites")) {
+            mFavoritesAdapter = new FavoritesAdapter(getActivity(), null, 0);
+            gridView.setAdapter(mFavoritesAdapter);
+        } else {
+            gridView.setAdapter(mMovieAdapter);
+            FetchMoviesTask fetchMovies = new FetchMoviesTask();
+            fetchMovies.execute(sortBy);
+            fetchMovies.setAdapter(mMovieAdapter);
+        }
 
+        //need another on item click listener that reads from database
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                MovieData movieData = mMovieAdapter.getItem(position);
-                startActivity(
-                        new Intent(getActivity(), MovieInfoActivity.class)
-                                .putExtra("movieInfoTag", movieData));
+
+                if (mTabNumber == 3) {
+                    Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+                    if (cursor != null) {
+                        Uri contentUri = DataContract.FavoritesEntry.buildMovieIdUri(
+                                cursor.getString(COL_MOVIE_ID)
+                        );
+                        Intent intent = new Intent(getActivity(), MovieInfoActivity.class)
+                                .setData(contentUri);
+                        startActivity(intent);
+                    }
+                } else {
+                    MovieData movieData = mMovieAdapter.getItem(position);
+                    startActivity(
+                            new Intent(getActivity(), MovieInfoActivity.class)
+                                    .putExtra("movieInfoTag", movieData));
+                }
             }
         });
 
-        fetchMovies.setAdapter(mMovieAdapter);
-
         return rootView;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(),
+                DataContract.FavoritesEntry.CONTENT_URI,
+                FAVORITES_COLUMNS,
+                null,
+                null,
+                null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (mTabNumber == 3) {
+            mFavoritesAdapter.swapCursor(data);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mFavoritesAdapter.swapCursor(null);
     }
 
     /* TOD: Rename method, update argument and hook method into UI event [needed?]

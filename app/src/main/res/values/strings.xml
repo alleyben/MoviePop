@@ -4,7 +4,6 @@
     <string name="action_about">About</string>
     <string name="content_authority">com.example.ben.moviepop.app</string>
 
-
     <string name="pref_sort_key" translatable="false">sort</string>
 
     <string name="pref_sort_label">sort option</string>
@@ -26,5 +25,10 @@
     <string name="pref_sort_Label_saved">Favorites</string-->
 
     <string name="app_font">sans-serif</string>
+
+    <string name="trending">Trending</string>
+    <string name="top_rated">Highest Rated</string>
+    <string name="upcoming">Coming Soon</string>
+    <string name="favorites">Favorites</string>
 
 </resources>

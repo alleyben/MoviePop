@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
@@ -34,11 +37,41 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class MovieInfoFragment extends Fragment {
+public class MovieInfoFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final String LOG_TAG = MovieInfoFragment.class.getSimpleName();
     private MovieData mMovie;
     private boolean isFavorite;
+    private Uri mUri;
+    static final String DETAIL_URI = "URI";
+
+    private static final int DETAILS_LOADER = 0;
+
+    private static final String[] DETAILS_COLUMNS = {
+            DataContract.FavoritesEntry.COLUMN_MOVIE_ID,
+            DataContract.FavoritesEntry.COLUMN_TITLE,
+            DataContract.FavoritesEntry.COLUMN_OVERVIEW,
+            DataContract.FavoritesEntry.COLUMN_POSTER_URL,
+            DataContract.FavoritesEntry.COLUMN_SCORE,
+            DataContract.FavoritesEntry.COLUMN_DATE//,
+//            DataContract.FavoritesEntry.COLUMN_TRAILER_URL,
+//            DataContract.FavoritesEntry.COLUMN_RATING
+    };
+
+    static final int COL_MOVIE_ID = 0;
+    static final int COL_TITLE = 1;
+    static final int COL_OVERVIEW = 2;
+    static final int COL_POSTER_URL = 3;
+    static final int COL_SCORE = 4;
+    static final int COL_DATE = 5;
+//    static final int COL_TRAILER_URL = 6;
+//    static final int COL_RATING = 7;
+
+    private ImageView mPosterView;
+    private TextView mTitleView;
+    private TextView mOverviewView;
+    private TextView mScoreView;
+    private TextView mDateView;
 
     public MovieInfoFragment() {
         setHasOptionsMenu(true);
@@ -50,7 +83,14 @@ public class MovieInfoFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_movie_info, container, false);
 
+        mPosterView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_poster);
+        mTitleView = (TextView) rootView.findViewById(R.id.fragment_movie_info_title);
+        mOverviewView = (TextView) rootView.findViewById(R.id.fragment_movie_info_overview);
+        mScoreView = (TextView) rootView.findViewById(R.id.fragment_movie_info_avg_score);
+        mDateView = (TextView) rootView.findViewById(R.id.fragment_movie_info_date);
+
         Intent intent = getActivity().getIntent();
+        Bundle arguments = getArguments();
         if (intent != null && intent.hasExtra("movieInfoTag")) {
             mMovie = intent.getParcelableExtra("movieInfoTag");
 
@@ -61,46 +101,9 @@ public class MovieInfoFragment extends Fragment {
             // fetchMovies.execute(mMovie.movieId);
 
             // Set title
-            ((TextView) rootView.findViewById(R.id.fragment_movie_info_title))
-                    .setText(mMovie.title);
-
-            // Get star favorite button
-            CheckBox starFavorite = (CheckBox) rootView.findViewById(R.id.star_button);
-            //CHECK FROM FAVORITES
-            String[] projection = {DataContract.FavoritesEntry.COLUMN_MOVIE_ID};
-            final String selection = DataContract.FavoritesEntry.TABLE_NAME +
-                    "." + DataContract.FavoritesEntry.COLUMN_MOVIE_ID + " = ? ";
-            final String[] selectionArgs = {mMovie.movieId};
-            Cursor cursor = getContext().getContentResolver().query(
-                    DataContract.FavoritesEntry.CONTENT_URI,
-                    projection,
-                    selection,
-                    selectionArgs,
-                    null
-            );
-            isFavorite = (cursor.getCount() != 0);
-            starFavorite.setChecked(isFavorite);
-            starFavorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //ADD TO FAVORITES
-                    if (isFavorite) {
-                        // content uri references whole table, selection references row, selectionArgs provides specific row
-                        getContext().getContentResolver().delete(
-                                DataContract.FavoritesEntry.CONTENT_URI, selection, selectionArgs);
-                    } else {
-                        ContentValues movieInfo = mMovie.getMovieDataCV();
-                        getContext().getContentResolver().insert(
-                                DataContract.FavoritesEntry.CONTENT_URI, movieInfo);
-                    }
-                    isFavorite = !isFavorite;
-                }
-            });
+            mTitleView.setText(mMovie.title);
 
             // Set poster image
-            ImageView posterView =
-                    (ImageView) rootView.findViewById(R.id.fragment_movie_info_poster);
-
             final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
             final String SIZE = "w500";
             final String POSTER_PATH = mMovie.posterPath;
@@ -112,19 +115,55 @@ public class MovieInfoFragment extends Fragment {
 
             Log.v(LOG_TAG, builtUri.toString());
 
-            Picasso.with(super.getContext()).load(builtUri).into(posterView);
+            Picasso.with(super.getContext()).load(builtUri).into(mPosterView);
 
             // Set details (date, avgScore)
             String movieDate = new StringBuilder("Release Date:\n").append(mMovie.date).toString();
-            ((TextView) rootView.findViewById(R.id.fragment_movie_info_date))
-                    .setText(movieDate);
-            ((TextView) rootView.findViewById(R.id.fragment_movie_info_avg_score))
-                    .setText("User Score:\n" + mMovie.avgScore);
+            mDateView.setText(movieDate);
+            mScoreView.setText("User Score:\n" + mMovie.avgScore);
 
             // Set overview
-            ((TextView) rootView.findViewById(R.id.fragment_movie_info_overview))
-                    .setText(mMovie.overview);
+            mOverviewView.setText(mMovie.overview);
+        } else if (arguments != null) {
+            mUri = arguments.getParcelable(MovieInfoFragment.DETAIL_URI);
         }
+
+        //CHECK FROM FAVORITES
+        String[] projection = {DataContract.FavoritesEntry.COLUMN_MOVIE_ID};
+        final String selection = DataContract.FavoritesEntry.TABLE_NAME +
+                "." + DataContract.FavoritesEntry.COLUMN_MOVIE_ID + " = ? ";
+        final String[] selectionArgs = {mMovie.movieId};
+
+        Cursor cursor = getContext().getContentResolver().query(
+                DataContract.FavoritesEntry.CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null);
+
+        isFavorite = (cursor.getCount() > 0);
+
+        // Get star favorite button
+        CheckBox starFavorite = (CheckBox) rootView.findViewById(R.id.star_button);
+        starFavorite.setChecked(isFavorite);
+
+        starFavorite.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //ADD TO FAVORITES
+                if (isFavorite) {
+                    // content uri references whole table, selection references row, selectionArgs provides specific row
+                    getContext().getContentResolver().delete(
+                            DataContract.FavoritesEntry.CONTENT_URI, selection, selectionArgs);
+                } else {
+                    ContentValues movieInfo = mMovie.getMovieDataCV();
+                    getContext().getContentResolver().insert(
+                            DataContract.FavoritesEntry.CONTENT_URI, movieInfo);
+                }
+                isFavorite = !isFavorite;
+            }
+        });
+
         return rootView;
     }
 
@@ -150,6 +189,58 @@ public class MovieInfoFragment extends Fragment {
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, mMovie.title);
         return shareIntent;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        if (mUri != null) {
+            return new CursorLoader(
+                    getActivity(),
+                    mUri,
+                    DETAILS_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
+        }
+        return null;
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        if (data != null && data.moveToFirst()) {
+
+            String title = data.getString(COL_TITLE);
+            mTitleView.setText(title);
+
+            String overview = data.getString(COL_OVERVIEW);
+            mOverviewView.setText(overview);
+
+            String score = data.getString(COL_SCORE);
+            mScoreView.setText(score);
+
+            String date = data.getString(COL_DATE);
+            mDateView.setText(date);
+
+            final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
+            final String SIZE = "w500";
+            final String POSTER_PATH = data.getString(COL_POSTER_URL);
+
+            Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon()
+                    .appendPath(SIZE)
+                    .appendEncodedPath(POSTER_PATH)
+                    .build();
+
+            Log.v(LOG_TAG, builtUri.toString());
+
+            Picasso.with(super.getContext()).load(builtUri).into(mPosterView);
+
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 
     public class FetchMovieDetailsTask extends AsyncTask<String, Void, String[]> {

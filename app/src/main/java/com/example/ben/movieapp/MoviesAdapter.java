@@ -1,25 +1,22 @@
 package com.example.ben.movieapp;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
-import java.net.URI;
 import java.util.List;
 
-public class ImageAdapter extends ArrayAdapter<MovieData> {
-    private static final String LOG_TAG = ImageAdapter.class.getSimpleName();
+public class MoviesAdapter extends ArrayAdapter<MovieData> {
+    private static final String LOG_TAG = MoviesAdapter.class.getSimpleName();
 
-    public ImageAdapter(Activity context, List<MovieData> images) {
+    public MoviesAdapter(Activity context, List<MovieData> images) {
         super(context, 0, images);
     }
 

@@ -19,7 +19,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
-    private ImageAdapter mMovieAdapter;
+    private MoviesAdapter mMovieAdapter;
 
     private String[] getMovieDataFromJson(String movieJsonStr) throws JSONException {
 
@@ -78,7 +78,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
                 String[] arr = s.split("~#~");
                 mMovieAdapter.add(new MovieData(arr));
             }
-            //mMovieAdapter.addAll(Movieresult);
+            //mMovieAdapter.addAll(Movieresult); can't use this because need to split
+            //strings into arrays to
             //create moviedata objects
             //analyze parseable
             //onPostExecute does not allow nested array
@@ -182,7 +183,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[]> {
         return null;
     }
 
-    public void setAdapter(ImageAdapter adapter) {
+    public void setAdapter(MoviesAdapter adapter) {
         mMovieAdapter = adapter;
     }
 }
