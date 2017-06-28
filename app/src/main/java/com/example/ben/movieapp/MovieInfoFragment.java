@@ -135,7 +135,7 @@ public class MovieInfoFragment extends Fragment implements LoaderManager.LoaderC
         final String[] selectionArgs = {mMovie.movieId};
 
         Cursor cursor = getContext().getContentResolver().query(
-                DataContract.FavoritesEntry.CONTENT_URI,
+                DataContract.FavoritesEntry.buildMovieIdUri(mMovie.movieId),
                 projection,
                 selection,
                 selectionArgs,

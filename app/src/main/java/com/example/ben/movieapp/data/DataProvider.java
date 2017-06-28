@@ -15,7 +15,7 @@ public class DataProvider extends ContentProvider{
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private DatabaseHelper mOpenHelper;
 
-    static final int ALL_MOVIES = 100;
+    static final int MOVIES_TABLE = 100;
     static final int MOVIE_BY_ID = 101;
 
     private static final SQLiteQueryBuilder sMovieQueryBuilder;
@@ -66,8 +66,8 @@ public class DataProvider extends ContentProvider{
     public static UriMatcher buildUriMatcher() {
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = DataContract.CONTENT_AUTHORITY;
-        matcher.addURI(authority, DataContract.PATH_FAVORITES, ALL_MOVIES);
-        matcher.addURI(authority, DataContract.PATH_FAVORITES, MOVIE_BY_ID);
+        matcher.addURI(authority, DataContract.PATH_FAVORITES, MOVIES_TABLE);
+        matcher.addURI(authority, DataContract.PATH_FAVORITES + "/*", MOVIE_BY_ID); //DataContract.PATH_FAVORITES + "/*"
         return matcher;
     }
 
@@ -88,7 +88,7 @@ public class DataProvider extends ContentProvider{
                 returnCursor = getMovieByID(uri, projection, selectionArgs);
                 break;
 
-            case ALL_MOVIES:
+            case MOVIES_TABLE:
                 returnCursor = getAllMovies();
                 break;
 
@@ -106,7 +106,7 @@ public class DataProvider extends ContentProvider{
         final int match = sUriMatcher.match(uri);
 
         switch (match) {
-            case MOVIE_BY_ID:
+            case MOVIES_TABLE:
                 return DataContract.FavoritesEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
@@ -122,7 +122,7 @@ public class DataProvider extends ContentProvider{
         Uri returnUri;
 
         switch (match) {
-            case MOVIE_BY_ID: {
+            case MOVIES_TABLE: {
                 long _id = db.insert(DataContract.FavoritesEntry.TABLE_NAME, null, values);
                 if (_id > 0) {
                     returnUri = DataContract.FavoritesEntry.buildMovieUri(_id);
@@ -146,7 +146,7 @@ public class DataProvider extends ContentProvider{
         int rowsDeleted;
         if (selection == null) selection = "1";
         switch (match) {
-            case MOVIE_BY_ID:
+            case MOVIES_TABLE:
                 rowsDeleted = db.delete(
                         DataContract.FavoritesEntry.TABLE_NAME, selection, selectionArgs);
                 break;
@@ -170,7 +170,7 @@ public class DataProvider extends ContentProvider{
         int rowsUpdated;
 
         switch (match) {
-            case MOVIE_BY_ID:
+            case MOVIES_TABLE:
                 rowsUpdated = db.update(DataContract.FavoritesEntry.TABLE_NAME,
                         values, selection, selectionArgs);
                 break;
@@ -183,19 +183,5 @@ public class DataProvider extends ContentProvider{
         }
 
         return rowsUpdated;
-    }
-
-    public boolean isFavorite(Uri uri, ContentValues values) {
-
-        final SQLiteDatabase db = mOpenHelper.getReadableDatabase();
-        final int match = sUriMatcher.match(uri);
-
-        switch (match) {
-            case MOVIE_BY_ID:
-                break;
-            default:
-                throw new UnsupportedOperationException("Unknown uri: " + uri);
-        }
-        return false;
     }
 }

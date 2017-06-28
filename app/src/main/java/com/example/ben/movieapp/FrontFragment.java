@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,8 @@ public class FrontFragment extends Fragment implements LoaderManager.LoaderCallb
     private int mTabNumber;
     private MoviesAdapter mMovieAdapter;
     private FavoritesAdapter mFavoritesAdapter;
+    private GridView mGridView;
+    private static final String LOG_TAG = FrontFragment.class.getSimpleName();
 
     private static final int FAVORITES_LOADER = 0;
 
@@ -75,6 +79,7 @@ public class FrontFragment extends Fragment implements LoaderManager.LoaderCallb
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt(ARG_TAB_NUMBER);
+            Log.d(LOG_TAG, ARG_TAB_NUMBER + " mTabNumber equals " + mTabNumber);
         }
         setHasOptionsMenu(false);
     }
@@ -121,7 +126,7 @@ public class FrontFragment extends Fragment implements LoaderManager.LoaderCallb
                         new ArrayList<MovieData>());
 
         View rootView = inflater.inflate(R.layout.fragment_front, container, false);
-        GridView gridView = (GridView) rootView.findViewById(R.id.grid_view_posters);
+        mGridView = (GridView) rootView.findViewById(R.id.grid_view_posters);
 
         //SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
         //String sortBy = sharedPrefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_popularity));
@@ -142,25 +147,36 @@ public class FrontFragment extends Fragment implements LoaderManager.LoaderCallb
         }
 
         if (sortBy.equals("favorites")) {
+            //mOpenHelper = dbHelper which is accessed through provider which is access through content resolver
+//            FavoritesDbHandler handler = new FavoritesDbHandler(this);
+//            SQLiteDatabase db = handler.getReadableDatabase();
+//            Cursor cursor = db.rawQuery("SELECT * FROM " + DataContract.FavoritesEntry.TABLE_NAME, null);
+//
+//            Cursor cursor = getContext().getContentResolver().query(DataContract.FavoritesEntry.CONTENT_URI, null, null, null, null);
+//            cursor.moveToFirst();
+//            String title = cursor.getString(COL_TITLE);
+            Log.d(LOG_TAG, "sortBy equals favorite ?= " + sortBy +
+                    "\nFavoritesAdapter initiated\nmTabNumber equals " + mTabNumber + "\n ");
             mFavoritesAdapter = new FavoritesAdapter(getActivity(), null, 0);
-            gridView.setAdapter(mFavoritesAdapter);
+            mGridView.setAdapter(mFavoritesAdapter);
         } else {
-            gridView.setAdapter(mMovieAdapter);
+            Log.d(LOG_TAG, "sortBy is NOT favorites ?= " + sortBy + "\nMovieAdapter and FetchMovieTask initiated\nmTabNumber equals " + mTabNumber);
+            mGridView.setAdapter(mMovieAdapter);
             FetchMoviesTask fetchMovies = new FetchMoviesTask();
             fetchMovies.execute(sortBy);
             fetchMovies.setAdapter(mMovieAdapter);
         }
 
         //need another on item click listener that reads from database
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 
-                if (mTabNumber == 3) {
+                if (mTabNumber > 2) {
                     Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                     if (cursor != null) {
                         Uri contentUri = DataContract.FavoritesEntry.buildMovieIdUri(
-                                cursor.getString(COL_MOVIE_ID)
+                                cursor.getString(COL_MOVIE_ID)//instead get position
                         );
                         Intent intent = new Intent(getActivity(), MovieInfoActivity.class)
                                 .setData(contentUri);
@@ -178,11 +194,17 @@ public class FrontFragment extends Fragment implements LoaderManager.LoaderCallb
         return rootView;
     }
 
+//    @Override
+//    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+//        getLoaderManager().initLoader(FAVORITES_LOADER, null, this);
+//        super.onActivityCreated(savedInstanceState);
+//    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         return new CursorLoader(getActivity(),
                 DataContract.FavoritesEntry.CONTENT_URI,
-                FAVORITES_COLUMNS,
+                null,//FAVORITES_COLUMNS,
                 null,
                 null,
                 null);

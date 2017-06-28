@@ -26,18 +26,15 @@ public class FavoritesAdapter extends CursorAdapter {
         }
     }
 
-    public FavoritesAdapter(Context context, Cursor c, boolean autoRequery) {
-        super(context, c, autoRequery);
-    }
-
     public FavoritesAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 
-
-
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
+
+        Log.d(LOG_TAG, "newView initiated");
+
         int layoutId = R.layout.grid_item_poster;
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
@@ -47,6 +44,8 @@ public class FavoritesAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
+
+        Log.d(LOG_TAG, "bindView initiated");
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         ImageView posterView = viewHolder.posterView;
@@ -62,7 +61,7 @@ public class FavoritesAdapter extends CursorAdapter {
                 .appendEncodedPath(POSTER_PATH)
                 .build();
 
-        Log.v(LOG_TAG, builtUri.toString());
+        Log.d(LOG_TAG, builtUri.toString());
 
         Picasso.with(context).load(builtUri).into(posterView);
     }
