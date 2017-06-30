@@ -111,8 +111,14 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            Log.d(LOG_TAG, "New Instance of FrontFragment with position " + position);
-            return FrontFragment.newInstance(position);
+
+            if (position == 3) {
+                Log.d(LOG_TAG, "\nNew Instance of FAVORITES with position " + position + "\n");
+                return FrontFavoritesFragment.newInstance(position);
+            } else {
+                Log.d(LOG_TAG, "\nNew Instance of FrontFragment with position " + position + "\n");
+                return FrontFragment.newInstance(position);
+            }
         }
 
         @Override

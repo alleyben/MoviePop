@@ -24,8 +24,6 @@ public class MoviesAdapter extends ArrayAdapter<MovieData> {
     public View getView(int position, View convertView, ViewGroup parent) {
         MovieData movieData = getItem(position);
 
-        Log.d(LOG_TAG, "getView initiated");
-
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext())
                     .inflate(R.layout.grid_item_poster, parent, false);

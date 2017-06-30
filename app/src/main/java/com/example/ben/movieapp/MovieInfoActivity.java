@@ -1,5 +1,6 @@
 package com.example.ben.movieapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -16,9 +17,22 @@ public class MovieInfoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_movie_info);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.activity_movie_info_container, new MovieInfoFragment())
-                    .commit();
+            Intent intent = getIntent();
+
+            if (intent.hasExtra("movieInfoTag")) {
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.activity_movie_info_container, new MovieInfoFragment())
+                        .commit();
+            } else {
+                Bundle arguments = new Bundle();
+                arguments.putParcelable(MovieInfoFavoritesFragment.DETAIL_URI, getIntent().getData());
+                MovieInfoFavoritesFragment favoritesFrag = new MovieInfoFavoritesFragment();
+                favoritesFrag.setArguments(arguments);
+
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.activity_movie_info_container, favoritesFrag)
+                        .commit();
+            }
         }
     }
 

@@ -32,7 +32,7 @@ public class DataContract {
         public static final String COLUMN_SCORE = "vote_average";
         public static final String COLUMN_DATE = "release_date";
 
-        public static Uri buildMovieUri(long id) {
+        public static Uri buildInsertMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 
@@ -62,7 +62,7 @@ public class DataContract {
         public static final String COLUMN_RATING = "rating";
         public static final String COLUMN_TRAILER_URL = "trailer_path";
 
-        public static Uri buildMovieUri(long id) {
+        public static Uri buildInsertMovieUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
 

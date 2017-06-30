@@ -28,6 +28,7 @@ public class FavoritesAdapter extends CursorAdapter {
 
     public FavoritesAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
+        Log.d(LOG_TAG, "FAVORITES ADAPTER INITIATED\n");
     }
 
     @Override
@@ -45,7 +46,7 @@ public class FavoritesAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        Log.d(LOG_TAG, "bindView initiated");
+        Log.d(LOG_TAG, "bindView initiated for item at position " + cursor.getPosition());
 
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         ImageView posterView = viewHolder.posterView;

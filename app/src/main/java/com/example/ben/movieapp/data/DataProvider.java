@@ -9,8 +9,11 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 public class DataProvider extends ContentProvider{
+
+    private static final String LOG_TAG = DataProvider.class.getSimpleName();
 
     private static final UriMatcher sUriMatcher = buildUriMatcher();
     private DatabaseHelper mOpenHelper;
@@ -85,7 +88,8 @@ public class DataProvider extends ContentProvider{
         switch (sUriMatcher.match(uri)) {
 
             case MOVIE_BY_ID:
-                returnCursor = getMovieByID(uri, projection, selectionArgs);
+                String movieId = DataContract.FavoritesEntry.getMovieId(uri);
+                returnCursor = getMovieByID(uri, projection, new String[] {movieId});
                 break;
 
             case MOVIES_TABLE:
@@ -125,7 +129,10 @@ public class DataProvider extends ContentProvider{
             case MOVIES_TABLE: {
                 long _id = db.insert(DataContract.FavoritesEntry.TABLE_NAME, null, values);
                 if (_id > 0) {
-                    returnUri = DataContract.FavoritesEntry.buildMovieUri(_id);
+                    returnUri = DataContract.FavoritesEntry.buildInsertMovieUri(_id);
+                    Log.d(LOG_TAG, "Inserted movie URI: " + returnUri.toString() + "\n" +
+                            "VALUES: " + values.toString()
+                    );
                 } else {
                     throw new android.database.SQLException("Failed to insert row into " + uri);
                 }
