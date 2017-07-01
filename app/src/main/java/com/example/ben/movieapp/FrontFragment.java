@@ -32,7 +32,6 @@ public class FrontFragment extends Fragment {
     private static final String ARG_TAB_NUMBER = "tab_number";
     private int mTabNumber;
     private MoviesAdapter mMovieAdapter;
-    private FavoritesAdapter mFavoritesAdapter;
     private static final String LOG_TAG = FrontFragment.class.getSimpleName();
 
 //    private OnFragmentInteractionListener mListener;
@@ -118,57 +117,26 @@ public class FrontFragment extends Fragment {
         }
 
         if (sortBy.equals("favorites")) {
-            //mOpenHelper = dbHelper which is accessed through provider which is access through content resolver
-//            FavoritesDbHandler handler = new FavoritesDbHandler(this);
-//            SQLiteDatabase db = handler.getReadableDatabase();
-//            Cursor cursor = db.rawQuery("SELECT * FROM " + DataContract.FavoritesEntry.TABLE_NAME, null);
-//
-//            Cursor cursor = getContext().getContentResolver().query(DataContract.FavoritesEntry.CONTENT_URI, null, null, null, null);
-//            cursor.moveToFirst();
-//            String title = cursor.getString(COL_TITLE);
             Log.d(LOG_TAG, "sortBy EQUALS FAVORITE\nwhy did this happen\nmTabNumber equals "
                     + mTabNumber + "\n");
-
-//            mGridView.setAdapter(mFavoritesAdapter);
-//            mFavoritesAdapter = new FavoritesAdapter(getActivity(), null, 0);
-//            if (mCursor != null) {
-//                Log.d(LOG_TAG, "Favorites Tab initiated\nCursor has items: " + mCursor.getCount());
-//                mFavoritesAdapter.swapCursor(mCursor);//just put as argument
-//            } else {
-//                Log.d(LOG_TAG, "mCursor is null for some reason");
-//            }
-
         } else {
-            Log.d(LOG_TAG, "sortBy EQUAlS " + sortBy + "\nMovieAdapter and FetchMovieTask initiated\nmTabNumber equals " + mTabNumber);
+            Log.d(LOG_TAG, "sortBy EQUAlS " + sortBy +
+                    "\nMovieAdapter and FetchMovieTask initiated\nmTabNumber equals " + mTabNumber);
             gridView.setAdapter(mMovieAdapter);
             FetchMoviesTask fetchMovies = new FetchMoviesTask();
             fetchMovies.execute(sortBy);
             fetchMovies.setAdapter(mMovieAdapter);
         }
 
-        //need another on item click listener that reads from database
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-//                if (mTabNumber > 2) {
-//                    Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-//                    if (cursor != null) {
-//                        Uri contentUri = DataContract.FavoritesEntry.buildMovieIdUri(
-//                                cursor.getString(COL_MOVIE_ID)//instead (of) get position
-//                        );
-//                        Log.d(LOG_TAG, "ITEM CLICKED at position: " + position + "\nuri created: " + contentUri.toString());
-//                        Intent intent = new Intent(getActivity(), MovieInfoActivity.class)
-//                                .setData(contentUri);
-//                        startActivity(intent);
-//                    }
-//                } else {
-                    MovieData movieData = mMovieAdapter.getItem(position);
-                    Log.d(LOG_TAG, "ITEM CLICKED at position: " + position + "\nmovie data sent for: " + movieData.toString());
-                    startActivity(
-                            new Intent(getActivity(), MovieInfoActivity.class)
-                                    .putExtra("movieInfoTag", movieData));
-//                }
+                MovieData movieData = mMovieAdapter.getItem(position);
+                Log.d(LOG_TAG, "ITEM CLICKED at position: " + position +
+                        "\nmovie data sent for: " + movieData.toString());
+                startActivity(
+                        new Intent(getActivity(), MovieInfoActivity.class)
+                                .putExtra("movieInfoTag", movieData));
             }
         });
 

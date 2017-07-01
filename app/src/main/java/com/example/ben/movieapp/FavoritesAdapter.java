@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
+import com.example.ben.movieapp.data.DataContract;
 import com.squareup.picasso.Picasso;
 
 public class FavoritesAdapter extends CursorAdapter {
@@ -28,13 +29,10 @@ public class FavoritesAdapter extends CursorAdapter {
 
     public FavoritesAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
-        Log.d(LOG_TAG, "FAVORITES ADAPTER INITIATED\n");
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-
-        Log.d(LOG_TAG, "newView initiated");
 
         int layoutId = R.layout.grid_item_poster;
         View view = LayoutInflater.from(context).inflate(layoutId, parent, false);
@@ -46,8 +44,6 @@ public class FavoritesAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
 
-        Log.d(LOG_TAG, "bindView initiated for item at position " + cursor.getPosition());
-
         ViewHolder viewHolder = (ViewHolder) view.getTag();
         ImageView posterView = viewHolder.posterView;
 
@@ -55,7 +51,7 @@ public class FavoritesAdapter extends CursorAdapter {
         // http://image.tmdb.org/t/p/w185/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
         final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
         final String SIZE = "w342";
-        final String POSTER_PATH = cursor.getString(FrontFragment.COL_POSTER_URL);
+        final String POSTER_PATH = cursor.getString(FrontFavoritesFragment.COL_POSTER_URL); // i.e. index is 4
 
         Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon()
                 .appendPath(SIZE)

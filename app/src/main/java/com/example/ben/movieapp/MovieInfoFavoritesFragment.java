@@ -74,6 +74,7 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 
         if (arguments != null) {
             mUri = arguments.getParcelable(MovieInfoFavoritesFragment.DETAIL_URI);
+            Log.d(LOG_TAG, "mUri created: " + mUri);
         }
 
         View rootView = inflater.inflate(R.layout.fragment_movie_info, container, false);
@@ -105,11 +106,18 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
     }
 
     private Intent createShareMovieIntent() {
+        Log.d(LOG_TAG, "createShareMovieIntent initiated");
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_TEXT, mMovie.title);
         return shareIntent;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(DETAILS_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -143,10 +151,14 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
             String overview = data.getString(COL_OVERVIEW);
             mOverviewView.setText(overview);
 
-            String score = data.getString(COL_SCORE);
+            String score = new StringBuilder("User Score:\n")
+                    .append(data.getString(COL_SCORE))
+                    .toString();
             mScoreView.setText(score);
 
-            String date = data.getString(COL_DATE);
+            String date = new StringBuilder("Release Date:\n")
+                    .append(data.getString(COL_DATE))
+                    .toString();
             mDateView.setText(date);
 
             final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";

@@ -50,7 +50,6 @@ public class MovieInfoFragment extends Fragment {
             mMovie = intent.getParcelableExtra("movieInfoTag");
 
             // TODO: make following changes
-            // make different class for favorites movie info with same layout!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! extends movieinfofrag
             //
             // Get movie id and run task to get mpaa rating and trailer urls
             // also more review scores, google link, share link etc.
@@ -70,7 +69,7 @@ public class MovieInfoFragment extends Fragment {
                     .appendEncodedPath(POSTER_PATH)
                     .build();
 
-            Log.v(LOG_TAG, builtUri.toString());
+            Log.d(LOG_TAG, builtUri.toString());
 
             Picasso.with(super.getContext()).load(builtUri).into(posterView);
 

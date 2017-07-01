@@ -34,7 +34,8 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
     private static final int FAVORITES_LOADER = 0;
 
     static final int COL_MOVIE_ID = 1;
-    // column indeces in order starting with 0:
+    static final int COL_POSTER_URL = 4;
+    // column indices in order starting with 0:
     // database row id, tmdb movie id, title, overview, poster url, score, date
 
     public static FrontFavoritesFragment newInstance(int tabNumber) {
@@ -53,7 +54,8 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt(ARG_TAB_NUMBER);
-            Log.d(LOG_TAG, ARG_TAB_NUMBER + " mTabNumber equals " + mTabNumber);
+            Log.d(LOG_TAG, ARG_TAB_NUMBER + " mTabNumber equals " + mTabNumber +
+                    "onCreate has been called");
         }
         setHasOptionsMenu(false);
     }
@@ -99,11 +101,11 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
 
         if (mTabNumber == 3) {
 
-            Log.d(LOG_TAG, "Tab number EQUALS 3!!!\nFavoritesAdapter initiated\nmTabNumber equals "
+            Log.d(LOG_TAG, "Tab number EQUALS 3!!!\nonCreateView has been called\nmTabNumber equals "
                     + mTabNumber + "\n");
 
-            gridView.setAdapter(mFavoritesAdapter);
             mFavoritesAdapter = new FavoritesAdapter(getActivity(), null, 0);
+            gridView.setAdapter(mFavoritesAdapter);
 
         } else {
             Log.d(LOG_TAG, "Tab number EQUAlS " + mTabNumber + "\nhow did this happen\nmTabNumber equals " + mTabNumber);
@@ -133,10 +135,12 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(FAVORITES_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
+        Log.d(LOG_TAG, "onActivityCreated has been called\nFavorites LOADER is INITIATED!!!!");
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        Log.d(LOG_TAG, "onCreateLoader has been called\nFavorites LOADER is CREATED!!!!");
         return new CursorLoader(getActivity(),
                 DataContract.FavoritesEntry.CONTENT_URI,
                 null,//FAVORITES_COLUMNS,
