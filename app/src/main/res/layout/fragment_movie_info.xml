@@ -86,6 +86,36 @@
                 android:layout_margin="10dp"
                 android:textIsSelectable="true" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_movie_info_homepage"
+                android:text="homepage"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_movie_info_tagline"
+                android:text="tagline"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_movie_info_imdb_id"
+                android:text="imdb"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_movie_info_runtime"
+                android:text="0 min"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_movie_info_rating"
+                android:text="Not Yet Rated"/>
+
         </LinearLayout>
 
     </LinearLayout>

@@ -36,6 +36,10 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 
     private static final int DETAILS_LOADER = 0;
 
+    // TODO fetch details task: get reviews, youtube trailers, mpaa rating, similar movies
+    // TODO google link, rotten tomatoes, meta critic
+
+
     private static final String[] DETAILS_COLUMNS = {
             DataContract.FavoritesEntry._ID,
             DataContract.FavoritesEntry.COLUMN_MOVIE_ID,

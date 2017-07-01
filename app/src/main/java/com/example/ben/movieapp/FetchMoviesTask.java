@@ -95,15 +95,23 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[][]> {
         //or get from param[0]
         // list pop by year
         String popularity = "popular";
+        String playing = "now_playing";
         //can't find analogous top_rated in discover uri mode, maybe eliminate, would not change much anyway
         String rating = "top_rated";
-        String newReleases = "new_releases";
+        String newReleases = "new_releases"; //TODO: create selection or tab
         String upcoming = "upcoming";
 
         String sortBy = params[0];
 
+        // TODO get by params: dates, genre, rating, etc; (check out available search args for tmdb)
+        // TODO replace "Trending" with "In Theaters",
+        // TODO refine by rating, genre (more? country, language)
+        // TODO "Top Rated" will be searchable
+        // TODO text searchable vs predefined parameters
+        // TODO (maybe) login, create account with tmdb feature, rate a movie, save favs to online db
+
         //check for wrong input
-        if (!sortBy.equals(popularity) && !sortBy.equals(rating) && !sortBy.equals(upcoming)) {
+        if (!sortBy.equals(playing) && !sortBy.equals(rating) && !sortBy.equals(upcoming)) {
             Log.e(LOG_TAG, "Incorrect input for sort type. Could not render movie data");
             return null;
         }
@@ -121,6 +129,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[][]> {
                     .appendQueryParameter(API_KEY, BuildConfig.TMDB_API_KEY)
                     .appendQueryParameter("region", "US")
                     .build();
+            // TODO setting for country and language (but not linked)
 
             Log.v(LOG_TAG, builtUri.toString());
 

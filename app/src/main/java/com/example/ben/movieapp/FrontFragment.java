@@ -103,7 +103,7 @@ public class FrontFragment extends Fragment {
         String sortBy = "";
         switch (mTabNumber) {
             case 0:
-                sortBy = "popular";
+                sortBy = "now_playing";
                 break;
             case 1:
                 sortBy = "top_rated";

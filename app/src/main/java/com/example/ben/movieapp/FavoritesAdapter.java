@@ -16,7 +16,7 @@ import com.squareup.picasso.Picasso;
 
 public class FavoritesAdapter extends CursorAdapter {
 
-    public static final String LOG_TAG = FavoritesAdapter.class.getSimpleName();
+    private static final String LOG_TAG = FavoritesAdapter.class.getSimpleName();
 
     public static class ViewHolder {
 

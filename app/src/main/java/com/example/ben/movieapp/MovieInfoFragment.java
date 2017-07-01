@@ -28,6 +28,10 @@ public class MovieInfoFragment extends Fragment {
     private MovieData mMovie;
     private boolean mIsFavorite;
 
+    // TODO fetch details task: get reviews, youtube trailers, mpaa rating, similar movies
+    // TODO google link, rotten tomatoes, meta critic
+
+
     public MovieInfoFragment() {
         setHasOptionsMenu(true);
     }
