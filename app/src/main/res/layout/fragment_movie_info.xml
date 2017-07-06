@@ -89,32 +89,44 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragment_movie_info_homepage"
-                android:text="homepage"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/fragment_movie_info_tagline"
-                android:text="tagline"/>
+                android:text="No tagline fetched. Set title instead"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/fragment_movie_info_imdb_id"
-                android:text="imdb"/>
+                android:text="No imdb id fetched"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/fragment_movie_info_runtime"
-                android:text="0 min"/>
+                android:text="No runtime fetched"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/fragment_movie_info_rating"
-                android:text="Not Yet Rated"/>
+                android:text="No rating fetched"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_movie_info_genres"
+                android:text="No genres fetched"/>
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_movie_info_videos"
+                android:text="youtube listview"/>
+
+            <Gallery
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/fragment_movie_info_similar"
+                android:text="similar movies horiz list view"/>
 
         </LinearLayout>
 

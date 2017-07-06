@@ -15,72 +15,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class FetchMoviesTask extends AsyncTask<String, Void, String[][]> {
+public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
     private MoviesAdapter mMovieAdapter;
 
-    private String[][] getMovieDataFromJson(String movieJsonStr) throws JSONException {
-
-        final String RESULTS = "results";
-        final String TITLE = "title";
-        final String OVERVIEW = "overview";
-        final String POSTER_URL = "poster_path";
-        final String SCORE = "vote_average";
-        final String DATE = "release_date";
-        final String MOVIEID = "id";
-
-
-        JSONObject movieJson = new JSONObject(movieJsonStr);
-        JSONArray movieArray = movieJson.getJSONArray(RESULTS);
-
-        String[][] resultStrArr = new String[movieArray.length()][];
-
-        for(int i = 0; i < resultStrArr.length; i++) {
-
-            JSONObject movieInfo = movieArray.getJSONObject(i);
-            String movieTitle = movieInfo.getString(TITLE);
-            String movieOverview = movieInfo.getString(OVERVIEW);
-            String moviePosterUrl = movieInfo.getString(POSTER_URL);
-            String movieRating = movieInfo.getString(SCORE);
-            String movieDate = movieInfo.getString(DATE);
-            String movieId = movieInfo.getString(MOVIEID);
-
-            resultStrArr[i] =
-                    new String[] {
-                            movieTitle,
-                            movieOverview,
-                            moviePosterUrl,
-                            movieRating,
-                            movieDate,
-                            movieId};
-        }
-
-        for(String[] strArr : resultStrArr) {
-            Log.v(LOG_TAG, "Movie entry: " + strArr.toString());
-        }
-
-        return resultStrArr;
-    }
-
     @Override
-    protected void onPostExecute(String[][] result) {
-        if (result != null) {
-            mMovieAdapter.clear();
-
-            for (String[] strArr : result) {
-                mMovieAdapter.add(new MovieData(strArr));
-            }
-            // mMovieAdapter.addAll(Movieresult);
-            // can't use this because need to
-            // create moviedata objects
-            // analyze parseable
-        }
-    }
-
-    @Override
-    protected String[][] doInBackground(String... params) {
+    protected MovieData[] doInBackground(String... params) {
 
         if (params.length == 0) {
             return null;
@@ -95,13 +37,38 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[][]> {
         //or get from param[0]
         // list pop by year
         String popularity = "popular";
-        String playing = "now_playing";
+        final String PLAYING = "now_playing";
         //can't find analogous top_rated in discover uri mode, maybe eliminate, would not change much anyway
-        String rating = "top_rated";
+        final String RATING = "top_rated";
         String newReleases = "new_releases"; //TODO: create selection or tab
-        String upcoming = "upcoming";
+        final String UPCOMING = "upcoming";
+        final String RECOMMENDATIONS = "recommendations";
 
-        String sortBy = params[0];
+        String sortBy = "";
+
+        boolean recsBool = false;
+
+        //check for wrong input
+        switch (params[0]) {
+            case PLAYING:
+                sortBy = PLAYING;
+                break;
+            case RATING:
+                sortBy = RATING;
+                break;
+            case UPCOMING:
+                sortBy = UPCOMING;
+                break;
+            default:
+                if (params[0].matches("[0-9]+")) {
+                    recsBool = true;
+                    sortBy = params[0];
+                } else {
+                    Log.e(LOG_TAG, "Incorrect input for sort type.\nParam input = " + params[0] +
+                            "\nCould not render movie data");
+                    return null;
+                }
+        }
 
         // TODO get by params: dates, genre, rating, etc; (check out available search args for tmdb)
         // TODO replace "Trending" with "In Theaters",
@@ -109,12 +76,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[][]> {
         // TODO "Top Rated" will be searchable
         // TODO text searchable vs predefined parameters
         // TODO (maybe) login, create account with tmdb feature, rate a movie, save favs to online db
-
-        //check for wrong input
-        if (!sortBy.equals(playing) && !sortBy.equals(rating) && !sortBy.equals(upcoming)) {
-            Log.e(LOG_TAG, "Incorrect input for sort type. Could not render movie data");
-            return null;
-        }
 
         try {
 
@@ -124,8 +85,12 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[][]> {
             final String RESULTS_BASE_URL = "https://api.themoviedb.org/3/movie";
             final String API_KEY = "api_key";
 
-            Uri builtUri = Uri.parse(RESULTS_BASE_URL).buildUpon()
-                    .appendPath(sortBy)
+            Uri.Builder uriBuilder = Uri.parse(RESULTS_BASE_URL).buildUpon()
+                    .appendPath(sortBy);
+            if(recsBool) {
+                uriBuilder.appendPath(RECOMMENDATIONS);
+            }
+            Uri builtUri = uriBuilder
                     .appendQueryParameter(API_KEY, BuildConfig.TMDB_API_KEY)
                     .appendQueryParameter("region", "US")
                     .build();
@@ -185,7 +150,80 @@ public class FetchMoviesTask extends AsyncTask<String, Void, String[][]> {
         return null;
     }
 
+    private MovieData[] getMovieDataFromJson(String movieJsonStr) throws JSONException {
+
+        final String RESULTS = "results";
+        final String TITLE = "title";
+        final String OVERVIEW = "overview";
+        final String POSTER_URL = "poster_path";
+        final String SCORE = "vote_average";
+        final String DATE = "release_date";
+        final String MOVIEID = "id";
+
+
+        JSONObject movieJson = new JSONObject(movieJsonStr);
+        JSONArray movieArray = movieJson.getJSONArray(RESULTS);
+
+        MovieData[] resultMovieArr = new MovieData[movieArray.length()];
+
+        for(int i = 0; i < resultMovieArr.length; i++) {
+
+            JSONObject movieInfo = movieArray.getJSONObject(i);
+            String movieTitle = movieInfo.getString(TITLE);
+            String movieOverview = movieInfo.getString(OVERVIEW);
+            String moviePosterUrl = movieInfo.getString(POSTER_URL);
+            String movieRating = movieInfo.getString(SCORE);
+            String movieDate = formatDate(movieInfo.getString(DATE));
+            String movieId = movieInfo.getString(MOVIEID);
+
+            resultMovieArr[i] = new MovieData(new String[] {
+                            movieTitle,
+                            movieOverview,
+                            moviePosterUrl,
+                            movieRating,
+                            movieDate,
+                            movieId});
+        }
+
+        for(MovieData movie : resultMovieArr) {
+            Log.v(LOG_TAG, "Movie entry: " + movie.toString() + "\n");
+        }
+
+        Log.v(LOG_TAG, "Movie entry: " + resultMovieArr.toString() + "\n");
+
+        return resultMovieArr;
+    }
+
+    @Override
+    protected void onPostExecute(MovieData[] result) {
+        if (result != null) {
+            mMovieAdapter.clear();
+            mMovieAdapter.addAll(result);
+
+//            for (String[] strArr : result) {
+//                mMovieAdapter.add(new MovieData(strArr));
+//            }
+            // mMovieAdapter.addAll(result);
+            // can't use this because need to
+            // create moviedata objects
+            // analyze parseable
+            // hashmap?
+        }
+    }
+
     public void setAdapter(MoviesAdapter adapter) {
         mMovieAdapter = adapter;
+    }
+
+    private String formatDate(String jsonDate) {
+        StringBuilder formattedDate = new StringBuilder();
+        String[] dateArr = jsonDate.split("-");
+        for (int i = 0; i < dateArr.length; i++) {
+            formattedDate.append(dateArr[i]);
+            if (i < dateArr.length-1) {
+                formattedDate.append("•");
+            }
+        }
+        return formattedDate.toString();
     }
 }

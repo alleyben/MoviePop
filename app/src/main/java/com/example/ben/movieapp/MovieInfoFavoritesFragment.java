@@ -155,15 +155,17 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
             String overview = data.getString(COL_OVERVIEW);
             mOverviewView.setText(overview);
 
-            String score = new StringBuilder("User Score:\n")
+            String score = data.getString(COL_SCORE);
+            String scoreStr = new StringBuilder("User Score:\n")
                     .append(data.getString(COL_SCORE))
                     .toString();
-            mScoreView.setText(score);
+            mScoreView.setText(scoreStr);
 
-            String date = new StringBuilder("Release Date:\n")
+            String date = data.getString(COL_DATE);
+            String dateStr = new StringBuilder("Release Date:\n")
                     .append(data.getString(COL_DATE))
                     .toString();
-            mDateView.setText(date);
+            mDateView.setText(dateStr);
 
             final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
             final String SIZE = "w500";

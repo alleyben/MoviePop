@@ -27,9 +27,11 @@ public class MovieInfoFragment extends Fragment {
     private static final String LOG_TAG = MovieInfoFragment.class.getSimpleName();
     private MovieData mMovie;
     private boolean mIsFavorite;
+    private DetailsAdapter mDetailsAdapter;
 
     // TODO fetch details task: get reviews, youtube trailers, mpaa rating, similar movies
     // TODO google link, rotten tomatoes, meta critic
+    // TODO backdrop_path with title over it, on upward move, backdrop fades or flows up, title flows up, info comes up into foreground
 
 
     public MovieInfoFragment() {
@@ -52,6 +54,13 @@ public class MovieInfoFragment extends Fragment {
 
         if (intent != null && intent.hasExtra("movieInfoTag")) {
             mMovie = intent.getParcelableExtra("movieInfoTag");
+
+            FetchDetailsTask detailsTask = new FetchDetailsTask();
+            detailsTask.setView(rootView);
+            detailsTask.execute(mMovie.movieId);
+            FetchRatingTask ratingTask = new FetchRatingTask();
+            ratingTask.setView(rootView);
+            ratingTask.execute(mMovie.movieId);
 
             // TODO: make following changes
             //
@@ -122,6 +131,9 @@ public class MovieInfoFragment extends Fragment {
                 mIsFavorite = !mIsFavorite;
             }
         });
+
+
+
 
         return rootView;
     }
