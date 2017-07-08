@@ -25,16 +25,15 @@ import java.util.ArrayList;
 
 public class FrontFragment extends Fragment {
 
-    /**
-     * The fragment argument representing the section number for this
-     * fragment.
-     */
+
+//    The fragment argument representing the section number for this fragment.
     private static final String ARG_TAB_NUMBER = "tab_number";
     private int mTabNumber;
     private MoviesAdapter mMovieAdapter;
     private static final String LOG_TAG = FrontFragment.class.getSimpleName();
 
 //    private OnFragmentInteractionListener mListener;
+    //don't know how to use this
 
     public static FrontFragment newInstance(int tabNumber) {
         FrontFragment fragment = new FrontFragment();
@@ -66,20 +65,8 @@ public class FrontFragment extends Fragment {
         if (id == R.id.action_refresh) {
             fetchMovies = new FetchMoviesTask();
             fetchMovies.setAdapter(mMovieAdapter);
-            //SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            //String sortBy = sharedPrefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_popularity));
-            String sortBy = "";
-            switch (mTabNumber) {
-                case 0:
-                    sortBy = "popular";
-                    break;
-                case 1:
-                    sortBy = "top_rated";
-                    break;
-                case 2:
-                    sortBy = "upcoming";
-                    break;
-            }
+            SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String sortBy = sharedPrefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_popularity));
             fetchMovies.execute(sortBy);
             return true;
         }
@@ -92,15 +79,13 @@ public class FrontFragment extends Fragment {
 
         mMovieAdapter =
                 new MoviesAdapter(
-                        getActivity(),
+                        getActivity(),// i.e. main activity
                         new ArrayList<MovieData>());
 
         View rootView = inflater.inflate(R.layout.fragment_front, container, false);
         GridView gridView = (GridView) rootView.findViewById(R.id.grid_view_posters);
 
-        //SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        //String sortBy = sharedPrefs.getString(getString(R.string.pref_sort_key), getString(R.string.pref_sort_popularity));
-        String sortBy = "";
+        String sortBy;
         switch (mTabNumber) {
             case 0:
                 sortBy = "now_playing";
@@ -114,6 +99,8 @@ public class FrontFragment extends Fragment {
             case 3:
                 sortBy = "favorites";
                 break;
+            default:
+                sortBy = null;
         }
 
         if (sortBy.equals("favorites")) {

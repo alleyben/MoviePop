@@ -14,12 +14,17 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
     private MoviesAdapter mMovieAdapter;
+    private RecyclerAdapter mRecyclerAdapter;
+    private boolean mRecBool = false;
 
     @Override
     protected MovieData[] doInBackground(String... params) {
@@ -28,27 +33,19 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
             return null;
         }
 
-
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         String movieJsonStr = null;
 
-        //if statements to determine which are placed in uri?
-        //or get from param[0]
-        // list pop by year
-        String popularity = "popular";
+//        String popularity = "popular";
         final String PLAYING = "now_playing";
-        //can't find analogous top_rated in discover uri mode, maybe eliminate, would not change much anyway
         final String RATING = "top_rated";
-        String newReleases = "new_releases"; //TODO: create selection or tab
         final String UPCOMING = "upcoming";
-        final String RECOMMENDATIONS = "recommendations";
+        final String RECOMMENDATIONS = "similar";
 
-        String sortBy = "";
+        String sortBy;
 
-        boolean recsBool = false;
-
-        //check for wrong input
+        //check for wrong input from params (i.e. from execute method)
         switch (params[0]) {
             case PLAYING:
                 sortBy = PLAYING;
@@ -61,7 +58,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
                 break;
             default:
                 if (params[0].matches("[0-9]+")) {
-                    recsBool = true;
+                    mRecBool = true;
                     sortBy = params[0];
                 } else {
                     Log.e(LOG_TAG, "Incorrect input for sort type.\nParam input = " + params[0] +
@@ -70,8 +67,10 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
                 }
         }
 
-        // TODO get by params: dates, genre, rating, etc; (check out available search args for tmdb)
-        // TODO replace "Trending" with "In Theaters",
+//        if (params[1] != null) {
+            // TODO get by params: dates, genre, rating, etc; (check out available search args for tmdb)
+//        }
+
         // TODO refine by rating, genre (more? country, language)
         // TODO "Top Rated" will be searchable
         // TODO text searchable vs predefined parameters
@@ -87,7 +86,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
 
             Uri.Builder uriBuilder = Uri.parse(RESULTS_BASE_URL).buildUpon()
                     .appendPath(sortBy);
-            if(recsBool) {
+            if(mRecBool) {
                 uriBuilder.appendPath(RECOMMENDATIONS);
             }
             Uri builtUri = uriBuilder
@@ -96,7 +95,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
                     .build();
             // TODO setting for country and language (but not linked)
 
-            Log.v(LOG_TAG, builtUri.toString());
+            Log.d(LOG_TAG, builtUri.toString() + "\n\n");
 
             URL url = new URL(builtUri.toString());
 
@@ -122,7 +121,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
 
             movieJsonStr = buffer.toString();
 
-            Log.v(LOG_TAG, "Movie String: " + movieJsonStr);
+            Log.d(LOG_TAG, "Movie String: " + movieJsonStr);
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "ERROR ", e);
@@ -186,10 +185,10 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
         }
 
         for(MovieData movie : resultMovieArr) {
-            Log.v(LOG_TAG, "Movie entry: " + movie.toString() + "\n");
+            Log.d(LOG_TAG, "Movie entry: " + movie.toString() + "\n");
         }
 
-        Log.v(LOG_TAG, "Movie entry: " + resultMovieArr.toString() + "\n");
+        Log.d(LOG_TAG, "Movie entry: " + resultMovieArr.toString() + "\n");
 
         return resultMovieArr;
     }
@@ -197,8 +196,13 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
     @Override
     protected void onPostExecute(MovieData[] result) {
         if (result != null) {
-            mMovieAdapter.clear();
-            mMovieAdapter.addAll(result);
+            if (mRecBool) {
+                mRecyclerAdapter.addArrayItems(Arrays.asList(result));
+
+            } else {
+                mMovieAdapter.clear();
+                mMovieAdapter.addAll(result);
+            }
 
 //            for (String[] strArr : result) {
 //                mMovieAdapter.add(new MovieData(strArr));
@@ -213,6 +217,10 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
 
     public void setAdapter(MoviesAdapter adapter) {
         mMovieAdapter = adapter;
+    }
+
+    public void setRecsAdapter(RecyclerAdapter adapter) {
+        mRecyclerAdapter = adapter;
     }
 
     private String formatDate(String jsonDate) {

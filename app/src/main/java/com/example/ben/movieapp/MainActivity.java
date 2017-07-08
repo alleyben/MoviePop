@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d(LOG_TAG, "Page position is " + position);
             switch (position) {
                 case 0:
-                    return "Now Playing";
+                    return "In Theaters";
                 case 1:
                     return "Highest Rated";
                 case 2:
