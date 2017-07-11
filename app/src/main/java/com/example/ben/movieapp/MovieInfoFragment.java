@@ -140,6 +140,9 @@ public class MovieInfoFragment extends Fragment {
             }
         });
 
+        // get trailers
+        FetchVideosTask fetchTrailers = new FetchVideosTask();
+        fetchTrailers.execute(mMovie.movieId);
 
 
         final RecyclerView recsView =
