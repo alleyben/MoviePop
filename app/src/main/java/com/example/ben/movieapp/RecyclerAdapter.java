@@ -18,11 +18,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
     private List<MovieData> mMovies;
     private Context mContext;
+    private OnItemClickListener mListener;
+    private List<MovieData> mMovieList;
     private final String LOG_TAG = RecyclerAdapter.class.getSimpleName();
 
     public RecyclerAdapter(Context context, List<MovieData> movies) {
         mContext = context;
         mMovies = movies;
+        mMovieList = movies;
     }
 
     private Context getContext() {
@@ -76,15 +79,49 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         this.notifyDataSetChanged();
     }
 
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+
+    public MovieData getItem(int position) {
+        return mMovieList.get(position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.mListener = listener;
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView titleTextView;
         public ImageView posterImageView;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(final View itemView) {
             super(itemView);
 
             titleTextView = (TextView) itemView.findViewById(R.id.recycler_item_poster_title);
             posterImageView = (ImageView) itemView.findViewById(R.id.recycler_item_poster_imagebtn);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        mListener.onItemClick(itemView, position);
+                    }
+                }
+            });
         }
+
+//        public void onClick(Activity activity, Context context) {
+//            int position = getAdapterPosition();
+//            if (position != RecyclerView.NO_POSITION) {
+//                MovieData movieData = mMovies.get(position);
+//                Log.d(LOG_TAG, "ITEM CLICKED at position: " + position +
+//                        "\nmovie data sent for: " + movieData.toString());
+//                context.startActivity(
+//                        new Intent(activity, MovieInfoActivity.class)
+//                                .putExtra("movieInfoTag", movieData));
+//            }
+//        }
     }
 }

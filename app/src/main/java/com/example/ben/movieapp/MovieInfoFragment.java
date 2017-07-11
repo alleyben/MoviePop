@@ -15,11 +15,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.GridView;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,13 +26,13 @@ import com.example.ben.movieapp.data.DataContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MovieInfoFragment extends Fragment {
 
     private static final String LOG_TAG = MovieInfoFragment.class.getSimpleName();
     private MovieData mMovie;
     private boolean mIsFavorite;
+    private RecyclerAdapter mRecAdapter;
 
     // TODO fetch details task: get reviews, youtube trailers, mpaa rating, similar movies
     // TODO google link, rotten tomatoes, meta critic
@@ -61,19 +60,22 @@ public class MovieInfoFragment extends Fragment {
         if (intent != null && intent.hasExtra("movieInfoTag")) {
             mMovie = intent.getParcelableExtra("movieInfoTag");
 
+            // get imdb, runtime, genres, tagline
+            // decided not to move fetching of all details here in order to space out fetching
+            // MovieData structure stays intact for now
             FetchDetailsTask detailsTask = new FetchDetailsTask();
             detailsTask.setView(rootView);
             detailsTask.execute(mMovie.movieId);
+
+            // get mpaa rating
             FetchRatingTask ratingTask = new FetchRatingTask();
             ratingTask.setView(rootView);
             ratingTask.execute(mMovie.movieId);
 
             // TODO: make following changes
             //
-            // Get movie id and run task to get mpaa rating and trailer urls
+            // Get movie trailer urls
             // also more review scores, google link, share link etc.
-            // FetchMovieDetailsTask fetchMovies = new FetchMovieDetailsTask();
-            // fetchMovies.execute(mMovie.movieId);
 
             // Set title
             titleView.setText(mMovie.title);
@@ -140,23 +142,29 @@ public class MovieInfoFragment extends Fragment {
 
 
 
-        MoviesAdapter movieAdapter =
-                new MoviesAdapter(
-                        getActivity(),// i.e. main activity
-                        new ArrayList<MovieData>());
-
-        RecyclerView recsView =
+        final RecyclerView recsView =
                 (RecyclerView) rootView.
                         findViewById(R.id.fragment_movie_info_movie_recs);
         LinearLayoutManager layoutManager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        RecyclerAdapter recAdapter = new RecyclerAdapter(getContext(), new ArrayList<MovieData>());
+        mRecAdapter = new RecyclerAdapter(getContext(), new ArrayList<MovieData>());
         recsView.setLayoutManager(layoutManager);
         FetchMoviesTask fetchMovies = new FetchMoviesTask();
-        fetchMovies.setRecsAdapter(recAdapter);
+        fetchMovies.setRecsAdapter(mRecAdapter);
         fetchMovies.execute(mMovie.movieId);
-        recsView.setAdapter(recAdapter);
+        recsView.setAdapter(mRecAdapter);
 
+        mRecAdapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                MovieData movieData = mRecAdapter.getItem(position);
+                Log.d(LOG_TAG, "Rec movie has been clicked!!!! ::: " + movieData.toString() +
+                        "\nat position: " + position + "\n");
+                startActivity(
+                        new Intent(getActivity(), MovieInfoActivity.class)
+                                .putExtra("movieInfoTag", movieData));
+            }
+        });
 
         return rootView;
     }

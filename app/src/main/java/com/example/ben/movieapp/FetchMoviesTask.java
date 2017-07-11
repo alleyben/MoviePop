@@ -41,7 +41,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
         final String PLAYING = "now_playing";
         final String RATING = "top_rated";
         final String UPCOMING = "upcoming";
-        final String RECOMMENDATIONS = "similar";
+        final String RECOMMENDATIONS = "similar"; // or "recommendations"
 
         String sortBy;
 
@@ -72,7 +72,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
 //        }
 
         // TODO refine by rating, genre (more? country, language)
-        // TODO "Top Rated" will be searchable
+        // TODO "Top Rated" will be searchable, negative, new fragment tab
         // TODO text searchable vs predefined parameters
         // TODO (maybe) login, create account with tmdb feature, rate a movie, save favs to online db
 
@@ -86,7 +86,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
 
             Uri.Builder uriBuilder = Uri.parse(RESULTS_BASE_URL).buildUpon()
                     .appendPath(sortBy);
-            if(mRecBool) {
+            if(mRecBool) { //sortBy equals some movie id
                 uriBuilder.appendPath(RECOMMENDATIONS);
             }
             Uri builtUri = uriBuilder
@@ -95,7 +95,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
                     .build();
             // TODO setting for country and language (but not linked)
 
-            Log.d(LOG_TAG, builtUri.toString() + "\n\n");
+            Log.v(LOG_TAG, builtUri.toString());
 
             URL url = new URL(builtUri.toString());
 
@@ -120,8 +120,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
             }
 
             movieJsonStr = buffer.toString();
-
-            Log.d(LOG_TAG, "Movie String: " + movieJsonStr);
 
         } catch (IOException e) {
             Log.e(LOG_TAG, "ERROR ", e);
@@ -185,10 +183,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
         }
 
         for(MovieData movie : resultMovieArr) {
-            Log.d(LOG_TAG, "Movie entry: " + movie.toString() + "\n");
+            Log.v(LOG_TAG, "Movie entry: " + movie.toString() + "\n");
         }
-
-        Log.d(LOG_TAG, "Movie entry: " + resultMovieArr.toString() + "\n");
 
         return resultMovieArr;
     }
@@ -203,15 +199,6 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
                 mMovieAdapter.clear();
                 mMovieAdapter.addAll(result);
             }
-
-//            for (String[] strArr : result) {
-//                mMovieAdapter.add(new MovieData(strArr));
-//            }
-            // mMovieAdapter.addAll(result);
-            // can't use this because need to
-            // create moviedata objects
-            // analyze parseable
-            // hashmap?
         }
     }
 
@@ -224,6 +211,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
     }
 
     private String formatDate(String jsonDate) {
+        // takes date from api and changes to dot format
         StringBuilder formattedDate = new StringBuilder();
         String[] dateArr = jsonDate.split("-");
         for (int i = 0; i < dateArr.length; i++) {
