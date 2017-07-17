@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -64,7 +65,7 @@ public class FetchDetailsTask extends AsyncTask<String, Void, List<Map<String, S
                     .build();
             // TODO setting for country and language (but not linked)
 
-            Log.d(LOG_TAG, detailsUri.toString());
+            Log.v(LOG_TAG, detailsUri.toString());
 
             URL url = new URL(detailsUri.toString());
 
@@ -90,7 +91,7 @@ public class FetchDetailsTask extends AsyncTask<String, Void, List<Map<String, S
 
             detailsJsonStr = buffer.toString();
 
-            Log.d(LOG_TAG, "Details String: " + detailsJsonStr);
+            Log.v(LOG_TAG, "Details String: " + detailsJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "ERROR ", e);
             return null;
@@ -165,7 +166,7 @@ public class FetchDetailsTask extends AsyncTask<String, Void, List<Map<String, S
 //            mDetailsAdapter.clear();
 //            mDetailsAdapter.addAll(result);
             Map<String, String> detailsMap = result.get(0);
-            Log.d(LOG_TAG, "Results are: " + detailsMap.toString());
+            Log.v(LOG_TAG, "Results are: " + detailsMap.toString());
 
             final String IMDB_ID = "imdb_id";
             final String RUNTIME = "runtime";

@@ -1,6 +1,5 @@
 package com.example.ben.movieapp;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 
-import com.example.ben.movieapp.data.DataContract;
 import com.squareup.picasso.Picasso;
 
 public class FavoritesAdapter extends CursorAdapter {

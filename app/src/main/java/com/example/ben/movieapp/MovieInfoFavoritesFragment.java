@@ -22,7 +22,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.ben.movieapp.data.DataContract;
+import com.example.ben.movieapp.database.DataContract;
 import com.squareup.picasso.Picasso;
 
 

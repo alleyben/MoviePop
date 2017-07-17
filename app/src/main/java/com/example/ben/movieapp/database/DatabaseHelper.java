@@ -1,11 +1,11 @@
-package com.example.ben.movieapp.data;
+package com.example.ben.movieapp.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 //import com.example.ben.movieapp.data.DataContract.MoviesEntry;
-import com.example.ben.movieapp.data.DataContract.FavoritesEntry;
+import com.example.ben.movieapp.database.DataContract.FavoritesEntry;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 

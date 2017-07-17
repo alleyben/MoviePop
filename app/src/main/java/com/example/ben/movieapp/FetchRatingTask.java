@@ -51,7 +51,7 @@ public class FetchRatingTask extends AsyncTask<String, Void, String> {
                     .build();
             // TODO setting for country and language (but not linked)
 
-            Log.d(LOG_TAG, detailsUri.toString());
+            Log.v(LOG_TAG, detailsUri.toString());
 
             URL url = new URL(detailsUri.toString());
 
@@ -77,7 +77,7 @@ public class FetchRatingTask extends AsyncTask<String, Void, String> {
 
             ratingJsonStr = buffer.toString();
 
-            Log.d(LOG_TAG, "Details String: " + ratingJsonStr);
+            Log.v(LOG_TAG, "Details String: " + ratingJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "ERROR ", e);
             return null;

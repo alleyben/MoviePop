@@ -2,7 +2,6 @@ package com.example.ben.movieapp;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.util.ArraySet;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -22,7 +21,7 @@ public class FetchVideosTask extends AsyncTask<String, Void, List<TrailerData>> 
 
     private final String LOG_TAG = FetchVideosTask.class.getSimpleName();
 
-    private RecyclerAdapter mVidAdapter;
+    private TrailerAdapter mVidAdapter;
 
     @Override
     protected List<TrailerData> doInBackground(String... params) {
@@ -53,7 +52,7 @@ public class FetchVideosTask extends AsyncTask<String, Void, List<TrailerData>> 
                     .appendQueryParameter("region", "US")
                     .build();
 
-            Log.d(LOG_TAG, videosUri.toString());
+            Log.v(LOG_TAG, videosUri.toString());
 
             URL url = new URL(videosUri.toString());
 
@@ -79,7 +78,7 @@ public class FetchVideosTask extends AsyncTask<String, Void, List<TrailerData>> 
 
             videosJsonStr = buffer.toString();
 
-            Log.d(LOG_TAG, "Videos String: " + videosJsonStr);
+            Log.v(LOG_TAG, "Videos String: " + videosJsonStr);
         } catch (IOException e) {
             Log.e(LOG_TAG, "ERROR ", e);
             return null;
@@ -141,12 +140,13 @@ public class FetchVideosTask extends AsyncTask<String, Void, List<TrailerData>> 
 
         if (mVidAdapter != null) {
             Log.d(LOG_TAG, "Trailer Adapter correctly set");
+            mVidAdapter.addArrayItems(trailerArr);
         } else {
-            Log.e(LOG_TAG, "You forgot to set the RecyclerAdapter, you fucktard");
+            Log.e(LOG_TAG, "You forgot to set the RecommendationsAdapter, you fucktard");
         }
     }
 
-    public void setAdapter(RecyclerAdapter adapter) {
+    public void setAdapter(TrailerAdapter adapter) {
         mVidAdapter = adapter;
     }
 }

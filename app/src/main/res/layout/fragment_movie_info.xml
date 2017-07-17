@@ -42,6 +42,7 @@
                     android:layout_weight="0.5"
                     android:orientation="vertical">
 
+                    <!-- Poster and Tagline -->
                     <ImageView
                         android:layout_width="270dp"
                         android:layout_height="300dp"
@@ -63,6 +64,7 @@
                     android:layout_weight="0.5"
                     android:orientation="vertical">
 
+                    <!-- Header: Rating, Runtime, Favorite Star, Release Date, User Score -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -103,6 +105,7 @@
 
             </LinearLayout>
 
+            <!-- Genres, Overview -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -117,17 +120,75 @@
                 android:layout_margin="10dp"
                 android:textIsSelectable="true" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <!-- Links: button links - IMDB, Google, Rotten Tomatoes, Tickets(?) -->
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="50dp"
+                    android:maxWidth="50dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:padding="4dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:clickable="true"
+                    android:id="@+id/fragment_movie_info_imdb_button"
+                    android:src="@drawable/ic_imdb"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="50dp"
+                    android:maxHeight="50dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:clickable="true"
+                    android:id="@+id/fragment_movie_info_google_button"
+                    android:src="@drawable/ic_google"/>
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:maxHeight="50dp"
+                    android:maxWidth="50dp"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitCenter"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:clickable="true"
+                    android:id="@+id/fragment_movie_info_rotten_tomatoes_button"
+                    android:src="@drawable/ic_rotten_tomatoes"/>
+
+            </LinearLayout>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/fragment_movie_info_imdb_id"
-                android:text="No imdb id fetched"/>
+                android:text="No imdb id fetched"
+                android:visibility="gone"/>
+
+            <!-- Trailers and Similar Movies -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Trailers:"
+                android:gravity="center"
+                android:padding="3dp"
+                android:layout_margin="3dp"
+                android:background="@color/colorAccent"/>
 
             <android.support.v7.widget.RecyclerView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragment_movie_info_yt_videos"
-                android:text="youtube listview"/>
+                android:id="@+id/fragment_movie_info_yt_videos"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -141,8 +202,7 @@
             <android.support.v7.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragment_movie_info_movie_recs"
-                android:text="similar movies horiz list view"/>
+                android:id="@+id/fragment_movie_info_movie_recs"/>
 
         </LinearLayout>
 

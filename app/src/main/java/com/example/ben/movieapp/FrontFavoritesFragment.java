@@ -16,9 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.example.ben.movieapp.data.DataContract;
-
-import java.util.ArrayList;
+import com.example.ben.movieapp.database.DataContract;
 
 public class FrontFavoritesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

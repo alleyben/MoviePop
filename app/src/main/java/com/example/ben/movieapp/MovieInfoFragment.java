@@ -15,14 +15,13 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.ben.movieapp.data.DataContract;
+import com.example.ben.movieapp.database.DataContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -32,7 +31,8 @@ public class MovieInfoFragment extends Fragment {
     private static final String LOG_TAG = MovieInfoFragment.class.getSimpleName();
     private MovieData mMovie;
     private boolean mIsFavorite;
-    private RecyclerAdapter mRecAdapter;
+    private RecommendationsAdapter mRecAdapter;
+    private TrailerAdapter mTrailerAdapter;
 
     // TODO fetch details task: get reviews, youtube trailers, mpaa rating, similar movies
     // TODO google link, rotten tomatoes, meta critic
@@ -47,7 +47,7 @@ public class MovieInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_movie_info, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_movie_info, container, false);
 
         ImageView posterView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_poster);
         TextView titleView = (TextView) rootView.findViewById(R.id.fragment_movie_info_title);
@@ -140,24 +140,104 @@ public class MovieInfoFragment extends Fragment {
             }
         });
 
+        // set imdb and google links
+        ImageView imdbImageView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_imdb_button);
+        imdbImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String IMDB_BASE_URL = "http://www.imdb.com/title";
+                TextView tv = (TextView) rootView.findViewById(R.id.fragment_movie_info_imdb_id);
+                final String IMDB_ID = (String) tv.getText();
+                // example:
+                // "http://www.imdb.com/title/<imdb_id>"
+                Uri imdbUri = Uri.parse(IMDB_BASE_URL).buildUpon().appendPath(IMDB_ID).build();
+                Log.d(LOG_TAG, imdbUri.toString());
+                startActivity(new Intent(Intent.ACTION_VIEW, imdbUri));
+            }
+        });
+
+        ImageView googleImageView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_google_button);
+        googleImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String GOOGLE_BASE_URL = "http://www.google.com/search";
+                final String QUERY = "q";
+                final String SEARCH_TERM = mMovie.title.trim();
+                // example:
+                // "http://www.google.com/#q=<movie_title>"
+                Uri googleUri = Uri.parse(GOOGLE_BASE_URL).buildUpon()
+                        .appendQueryParameter(QUERY, SEARCH_TERM)
+                        .build();
+                Log.d(LOG_TAG, googleUri.toString());
+                startActivity(new Intent(Intent.ACTION_VIEW, googleUri));
+            }
+        });
+
+        ImageView roTomatoesImageView =
+                (ImageView) rootView.findViewById(R.id.fragment_movie_info_rotten_tomatoes_button);
+        roTomatoesImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final String RT_BASE_URL = "http://www.rottentomatoes.com/search/";
+                final String SEARCH = "search";
+                final String SEARCH_TERM = mMovie.title.trim();
+                // example:
+                // "http://www.rottentomatoes.com/search?search=<movie_title>"
+                Uri rtUri = Uri.parse(RT_BASE_URL).buildUpon()
+                        .appendQueryParameter(SEARCH, SEARCH_TERM)
+                        .build();
+                Log.d(LOG_TAG, rtUri.toString());
+                startActivity(new Intent(Intent.ACTION_VIEW, rtUri));
+            }
+        });
+
         // get trailers
-        FetchVideosTask fetchTrailers = new FetchVideosTask();
-        fetchTrailers.execute(mMovie.movieId);
-
-
-        final RecyclerView recsView =
-                (RecyclerView) rootView.
-                        findViewById(R.id.fragment_movie_info_movie_recs);
-        LinearLayoutManager layoutManager =
+        final RecyclerView trailersView =
+                (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_yt_videos);
+        LinearLayoutManager trailersLayoutManager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mRecAdapter = new RecyclerAdapter(getContext(), new ArrayList<MovieData>());
-        recsView.setLayoutManager(layoutManager);
+        mTrailerAdapter = new TrailerAdapter(getContext(), new ArrayList<TrailerData>());
+        trailersView.setLayoutManager(trailersLayoutManager);
+        FetchVideosTask fetchTrailers = new FetchVideosTask();
+        fetchTrailers.setAdapter(mTrailerAdapter);
+        fetchTrailers.execute(mMovie.movieId);
+        trailersView.setAdapter(mTrailerAdapter);
+
+        mTrailerAdapter.setOnItemClickListener(new TrailerAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                TrailerData trailerData = mTrailerAdapter.getItem(position);
+                Log.d(LOG_TAG, "Youtube video has been clicked: " + trailerData.toString() +
+                        "\nat position: " + position + "\n");
+
+                final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
+                final String TRAILER_PATH = trailerData.trailerPath;
+
+                // example:
+                // http://www.youtube.com/watch?v=<trailer path>
+                Uri trailerUri = Uri.parse(TRAILER_BASE_URL).buildUpon()
+                        .appendEncodedPath(TRAILER_PATH)
+                        .build();
+
+                startActivity(
+                        new Intent(Intent.ACTION_VIEW, trailerUri));
+            }
+        });
+
+
+        // get similar movie recommendations
+        final RecyclerView recsView =
+                (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_movie_recs);
+        LinearLayoutManager recsLayoutManager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        mRecAdapter = new RecommendationsAdapter(getContext(), new ArrayList<MovieData>());
+        recsView.setLayoutManager(recsLayoutManager);
         FetchMoviesTask fetchMovies = new FetchMoviesTask();
         fetchMovies.setRecsAdapter(mRecAdapter);
         fetchMovies.execute(mMovie.movieId);
         recsView.setAdapter(mRecAdapter);
 
-        mRecAdapter.setOnItemClickListener(new RecyclerAdapter.OnItemClickListener() {
+        mRecAdapter.setOnItemClickListener(new RecommendationsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView, int position) {
                 MovieData movieData = mRecAdapter.getItem(position);

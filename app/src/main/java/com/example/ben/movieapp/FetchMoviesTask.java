@@ -14,16 +14,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
 
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
     private MoviesAdapter mMovieAdapter;
-    private RecyclerAdapter mRecyclerAdapter;
+    private RecommendationsAdapter mRecommendationsAdapter;
     private boolean mRecBool = false;
 
     @Override
@@ -193,7 +191,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
     protected void onPostExecute(MovieData[] result) {
         if (result != null) {
             if (mRecBool) {
-                mRecyclerAdapter.addArrayItems(Arrays.asList(result));
+                mRecommendationsAdapter.addArrayItems(Arrays.asList(result));
 
             } else {
                 mMovieAdapter.clear();
@@ -206,8 +204,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
         mMovieAdapter = adapter;
     }
 
-    public void setRecsAdapter(RecyclerAdapter adapter) {
-        mRecyclerAdapter = adapter;
+    public void setRecsAdapter(RecommendationsAdapter adapter) {
+        mRecommendationsAdapter = adapter;
     }
 
     private String formatDate(String jsonDate) {

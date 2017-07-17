@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.ben.movieapp.data.DataContract;
+import com.example.ben.movieapp.database.DataContract;
 
 import java.util.Date;
 
@@ -35,12 +35,6 @@ class MovieData implements Parcelable{
         avgScore = in.readString();
         date = in.readString();
         movieId = in.readString();
-    }
-
-    public String dateToString() {
-        String calDate = "";
-        Date df = new Date("yyyy-MM-dd");
-        return calDate;
     }
 
     @Override

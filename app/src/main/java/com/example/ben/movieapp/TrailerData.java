@@ -1,13 +1,8 @@
 package com.example.ben.movieapp;
 
 
-import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.example.ben.movieapp.data.DataContract;
-
-import java.util.Date;
 
 public class TrailerData implements Parcelable{
 
@@ -37,12 +32,8 @@ public class TrailerData implements Parcelable{
 //
 //        ContentValues cv = new ContentValues();
 //
-//        cv.put(DataContract.FavoritesEntry.COLUMN_TITLE, title);
-//        cv.put(DataContract.FavoritesEntry.COLUMN_OVERVIEW, overview);
-//        cv.put(DataContract.FavoritesEntry.COLUMN_POSTER_URL, posterPath);
-//        cv.put(DataContract.FavoritesEntry.COLUMN_SCORE, avgScore);
-//        cv.put(DataContract.FavoritesEntry.COLUMN_DATE, date);
-//        cv.put(DataContract.FavoritesEntry.COLUMN_MOVIE_ID, movieId);
+//        cv.put(DataContract.FavoritesEntry.COLUMN_TRAILER_TITLE, title);
+//        cv.put(DataContract.FavoritesEntry.COLUMN_PREVIEW_URL, trailerPath);
 //
 //        return cv;
 //    }
