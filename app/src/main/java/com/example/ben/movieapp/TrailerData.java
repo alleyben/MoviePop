@@ -32,8 +32,8 @@ public class TrailerData implements Parcelable{
 //
 //        ContentValues cv = new ContentValues();
 //
-//        cv.put(DataContract.FavoritesEntry.COLUMN_TRAILER_TITLE, title);
-//        cv.put(DataContract.FavoritesEntry.COLUMN_PREVIEW_URL, trailerPath);
+//        cv.put(DataContract.FavoritesContract.COLUMN_TRAILER_TITLE, title);
+//        cv.put(DataContract.FavoritesContract.COLUMN_PREVIEW_URL, trailerPath);
 //
 //        return cv;
 //    }

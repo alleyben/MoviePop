@@ -6,8 +6,6 @@ import android.os.Parcelable;
 
 import com.example.ben.movieapp.database.DataContract;
 
-import java.util.Date;
-
 class MovieData implements Parcelable{
 
     String title;
@@ -48,12 +46,12 @@ class MovieData implements Parcelable{
 
         ContentValues cv = new ContentValues();
 
-        cv.put(DataContract.FavoritesEntry.COLUMN_TITLE, title);
-        cv.put(DataContract.FavoritesEntry.COLUMN_OVERVIEW, overview);
-        cv.put(DataContract.FavoritesEntry.COLUMN_POSTER_URL, posterPath);
-        cv.put(DataContract.FavoritesEntry.COLUMN_SCORE, avgScore);
-        cv.put(DataContract.FavoritesEntry.COLUMN_DATE, date);
-        cv.put(DataContract.FavoritesEntry.COLUMN_MOVIE_ID, movieId);
+        cv.put(DataContract.FavoritesContract.COLUMN_TITLE, title);
+        cv.put(DataContract.FavoritesContract.COLUMN_OVERVIEW, overview);
+        cv.put(DataContract.FavoritesContract.COLUMN_POSTER_URL, posterPath);
+        cv.put(DataContract.FavoritesContract.COLUMN_SCORE, avgScore);
+        cv.put(DataContract.FavoritesContract.COLUMN_DATE, date);
+        cv.put(DataContract.FavoritesContract.COLUMN_MOVIE_ID, movieId);
 
         return cv;
     }

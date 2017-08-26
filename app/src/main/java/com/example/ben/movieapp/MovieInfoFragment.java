@@ -30,13 +30,12 @@ public class MovieInfoFragment extends Fragment {
 
     private static final String LOG_TAG = MovieInfoFragment.class.getSimpleName();
     private MovieData mMovie;
+    private ContentValues mMovieDataCV;
     private boolean mIsFavorite;
     private RecommendationsAdapter mRecAdapter;
     private TrailerAdapter mTrailerAdapter;
 
-    // TODO fetch details task: get reviews, youtube trailers, mpaa rating, similar movies
-    // TODO google link, rotten tomatoes, meta critic
-    // TODO backdrop_path with title over it, on upward move, backdrop fades or flows up, title flows up, info comes up into foreground
+    // TODO backdrop_path with title over it, on upward move, backdrop fades or flows up, title flows up to header and sticks, info comes up into foreground
 
 
     public MovieInfoFragment() {
@@ -54,6 +53,16 @@ public class MovieInfoFragment extends Fragment {
         TextView overviewView = (TextView) rootView.findViewById(R.id.fragment_movie_info_overview);
         TextView scoreView = (TextView) rootView.findViewById(R.id.fragment_movie_info_avg_score);
         TextView dateView = (TextView) rootView.findViewById(R.id.fragment_movie_info_date);
+        ImageView imdbImageView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_imdb_button);
+        ImageView googleImageView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_google_button);
+        ImageView roTomatoesImageView =
+                (ImageView) rootView.findViewById(R.id.fragment_movie_info_rotten_tomatoes_button);
+        final RecyclerView trailersView =
+                (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_yt_videos);
+        final RecyclerView recsView =
+                (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_movie_recs);
+        CheckBox starFavorite = (CheckBox) rootView.findViewById(R.id.star_button);
+
 
         Intent intent = getActivity().getIntent();
 
@@ -101,153 +110,235 @@ public class MovieInfoFragment extends Fragment {
 
             // Set overview
             overviewView.setText(mMovie.overview);
-        }
 
-        //CHECK FROM FAVORITES
-        String[] projection = {DataContract.FavoritesEntry.COLUMN_MOVIE_ID};
-        final String selection = DataContract.FavoritesEntry.TABLE_NAME +
-                "." + DataContract.FavoritesEntry.COLUMN_MOVIE_ID + " = ? ";
-        final String[] selectionArgs = {mMovie.movieId};
-
-        final Cursor cursor = getContext().getContentResolver().query(
-                DataContract.FavoritesEntry.buildMovieIdUri(mMovie.movieId),
-                projection,
-                selection,
-                selectionArgs,
-                null);
-
-        mIsFavorite = (cursor.getCount() > 0);
-
-        // Get star favorite button
-        CheckBox starFavorite = (CheckBox) rootView.findViewById(R.id.star_button);
-        starFavorite.setChecked(mIsFavorite);
-
-        starFavorite.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //ADD TO FAVORITES
-                if (mIsFavorite) {
-                    // content uri references whole table, selection references row, selectionArgs provides specific row
-                    getContext().getContentResolver().delete(
-                            DataContract.FavoritesEntry.CONTENT_URI, selection, selectionArgs);
-                    Log.d(LOG_TAG, mMovie.title + " movie deleted from database");
-                } else {
-                    ContentValues movieInfo = mMovie.getMovieDataCV();
-                    getContext().getContentResolver().insert(
-                            DataContract.FavoritesEntry.CONTENT_URI, movieInfo);
+            // set imdb button listener
+            imdbImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String IMDB_BASE_URL = "http://www.imdb.com/title";
+                    TextView tv = (TextView) rootView.findViewById(R.id.fragment_movie_info_imdb_id);
+                    final String IMDB_ID = (String) tv.getText();
+                    // example:
+                    // "http://www.imdb.com/title/<imdb_id>"
+                    Uri imdbUri = Uri.parse(IMDB_BASE_URL).buildUpon().appendPath(IMDB_ID).build();
+                    Log.d(LOG_TAG, imdbUri.toString());
+                    startActivity(new Intent(Intent.ACTION_VIEW, imdbUri));
                 }
-                mIsFavorite = !mIsFavorite;
-            }
-        });
+            });
 
-        // set imdb and google links
-        ImageView imdbImageView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_imdb_button);
-        imdbImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String IMDB_BASE_URL = "http://www.imdb.com/title";
-                TextView tv = (TextView) rootView.findViewById(R.id.fragment_movie_info_imdb_id);
-                final String IMDB_ID = (String) tv.getText();
-                // example:
-                // "http://www.imdb.com/title/<imdb_id>"
-                Uri imdbUri = Uri.parse(IMDB_BASE_URL).buildUpon().appendPath(IMDB_ID).build();
-                Log.d(LOG_TAG, imdbUri.toString());
-                startActivity(new Intent(Intent.ACTION_VIEW, imdbUri));
-            }
-        });
+            // set google button listener
+            googleImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String GOOGLE_BASE_URL = "http://www.google.com/search";
+                    final String QUERY = "q";
+                    final String SEARCH_TERM = mMovie.title.trim();
+                    // example:
+                    // "http://www.google.com/#q=<movie_title>"
+                    Uri googleUri = Uri.parse(GOOGLE_BASE_URL).buildUpon()
+                            .appendQueryParameter(QUERY, SEARCH_TERM)
+                            .build();
+                    Log.d(LOG_TAG, googleUri.toString());
+                    startActivity(new Intent(Intent.ACTION_VIEW, googleUri));
+                }
+            });
 
-        ImageView googleImageView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_google_button);
-        googleImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String GOOGLE_BASE_URL = "http://www.google.com/search";
-                final String QUERY = "q";
-                final String SEARCH_TERM = mMovie.title.trim();
-                // example:
-                // "http://www.google.com/#q=<movie_title>"
-                Uri googleUri = Uri.parse(GOOGLE_BASE_URL).buildUpon()
-                        .appendQueryParameter(QUERY, SEARCH_TERM)
-                        .build();
-                Log.d(LOG_TAG, googleUri.toString());
-                startActivity(new Intent(Intent.ACTION_VIEW, googleUri));
-            }
-        });
+            // set rotten tomatoes button listener
+            roTomatoesImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final String RT_BASE_URL = "http://www.rottentomatoes.com/search/";
+                    final String SEARCH = "search";
+                    final String SEARCH_TERM = mMovie.title.trim();
+                    // example:
+                    // "http://www.rottentomatoes.com/search?search=<movie_title>"
+                    Uri rtUri = Uri.parse(RT_BASE_URL).buildUpon()
+                            .appendQueryParameter(SEARCH, SEARCH_TERM)
+                            .build();
+                    Log.d(LOG_TAG, rtUri.toString());
+                    startActivity(new Intent(Intent.ACTION_VIEW, rtUri));
+                }
+            });
 
-        ImageView roTomatoesImageView =
-                (ImageView) rootView.findViewById(R.id.fragment_movie_info_rotten_tomatoes_button);
-        roTomatoesImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final String RT_BASE_URL = "http://www.rottentomatoes.com/search/";
-                final String SEARCH = "search";
-                final String SEARCH_TERM = mMovie.title.trim();
-                // example:
-                // "http://www.rottentomatoes.com/search?search=<movie_title>"
-                Uri rtUri = Uri.parse(RT_BASE_URL).buildUpon()
-                        .appendQueryParameter(SEARCH, SEARCH_TERM)
-                        .build();
-                Log.d(LOG_TAG, rtUri.toString());
-                startActivity(new Intent(Intent.ACTION_VIEW, rtUri));
-            }
-        });
+            // get trailers
+            LinearLayoutManager trailersLayoutManager =
+                    new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            mTrailerAdapter = new TrailerAdapter(getContext(), new ArrayList<TrailerData>());
+            trailersView.setLayoutManager(trailersLayoutManager);
+            FetchVideosTask fetchTrailers = new FetchVideosTask();
+            fetchTrailers.setAdapter(mTrailerAdapter);
+            fetchTrailers.execute(mMovie.movieId);
+            trailersView.setAdapter(mTrailerAdapter);
 
-        // get trailers
-        final RecyclerView trailersView =
-                (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_yt_videos);
-        LinearLayoutManager trailersLayoutManager =
-                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mTrailerAdapter = new TrailerAdapter(getContext(), new ArrayList<TrailerData>());
-        trailersView.setLayoutManager(trailersLayoutManager);
-        FetchVideosTask fetchTrailers = new FetchVideosTask();
-        fetchTrailers.setAdapter(mTrailerAdapter);
-        fetchTrailers.execute(mMovie.movieId);
-        trailersView.setAdapter(mTrailerAdapter);
+            mTrailerAdapter.setOnItemClickListener(new TrailerAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View itemView, int position) {
+                    TrailerData trailerData = mTrailerAdapter.getItem(position);
+                    Log.d(LOG_TAG, "Youtube video has been clicked: " + trailerData.toString() +
+                            "\nat position: " + position + "\n");
 
-        mTrailerAdapter.setOnItemClickListener(new TrailerAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, int position) {
-                TrailerData trailerData = mTrailerAdapter.getItem(position);
-                Log.d(LOG_TAG, "Youtube video has been clicked: " + trailerData.toString() +
-                        "\nat position: " + position + "\n");
+                    final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
+                    final String TRAILER_PATH = trailerData.trailerPath;
 
-                final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
-                final String TRAILER_PATH = trailerData.trailerPath;
+                    // example:
+                    // http://www.youtube.com/watch?v=<trailer path>
+                    Uri trailerUri = Uri.parse(TRAILER_BASE_URL).buildUpon()
+                            .appendEncodedPath(TRAILER_PATH)
+                            .build();
 
-                // example:
-                // http://www.youtube.com/watch?v=<trailer path>
-                Uri trailerUri = Uri.parse(TRAILER_BASE_URL).buildUpon()
-                        .appendEncodedPath(TRAILER_PATH)
-                        .build();
-
-                startActivity(
-                        new Intent(Intent.ACTION_VIEW, trailerUri));
-            }
-        });
+                    startActivity(
+                            new Intent(Intent.ACTION_VIEW, trailerUri));
+                }
+            });
 
 
-        // get similar movie recommendations
-        final RecyclerView recsView =
-                (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_movie_recs);
-        LinearLayoutManager recsLayoutManager =
-                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mRecAdapter = new RecommendationsAdapter(getContext(), new ArrayList<MovieData>());
-        recsView.setLayoutManager(recsLayoutManager);
-        FetchMoviesTask fetchMovies = new FetchMoviesTask();
-        fetchMovies.setRecsAdapter(mRecAdapter);
-        fetchMovies.execute(mMovie.movieId);
-        recsView.setAdapter(mRecAdapter);
+            // get similar movie recommendations
+            LinearLayoutManager recsLayoutManager =
+                    new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+            mRecAdapter = new RecommendationsAdapter(getContext(), new ArrayList<MovieData>());
+            recsView.setLayoutManager(recsLayoutManager);
+            FetchMoviesTask fetchMovies = new FetchMoviesTask();
+            fetchMovies.setRecsAdapter(mRecAdapter);
+            fetchMovies.execute(mMovie.movieId);
+            recsView.setAdapter(mRecAdapter);
 
-        mRecAdapter.setOnItemClickListener(new RecommendationsAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View itemView, int position) {
-                MovieData movieData = mRecAdapter.getItem(position);
-                Log.d(LOG_TAG, "Rec movie has been clicked!!!! ::: " + movieData.toString() +
-                        "\nat position: " + position + "\n");
-                startActivity(
-                        new Intent(getActivity(), MovieInfoActivity.class)
-                                .putExtra("movieInfoTag", movieData));
-            }
-        });
+            mRecAdapter.setOnItemClickListener(new RecommendationsAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View itemView, int position) {
+                    MovieData movieData = mRecAdapter.getItem(position);
+                    Log.d(LOG_TAG, "Rec movie has been clicked!!!! ::: " + movieData.toString() +
+                            "\nat position: " + position + "\n");
+                    startActivity(
+                            new Intent(getActivity(), MovieInfoActivity.class)
+                                    .putExtra("movieInfoTag", movieData));
+                }
+            });
+
+            //CHECK FROM FAVORITES
+            String[] projection = {DataContract.FavoritesContract.COLUMN_MOVIE_ID};
+            final String favoritesSelection = DataContract.FavoritesContract.TABLE_NAME +
+                    "." + DataContract.FavoritesContract.COLUMN_MOVIE_ID + " = ? ";
+            final String[] selectionArgs = {mMovie.movieId};
+
+            final Cursor cursor = getContext().getContentResolver().query(
+                    DataContract.FavoritesContract.buildMovieIdUri(mMovie.movieId),
+                    projection,
+                    favoritesSelection,
+                    selectionArgs,
+                    null);
+
+            mIsFavorite = (cursor.getCount() > 0);
+
+            // Get star favorite button
+            starFavorite.setChecked(mIsFavorite);
+
+            starFavorite.setOnClickListener(new View.OnClickListener() {
+
+                final String trailersSelection = DataContract.TrailersContract.TABLE_NAME + "." +
+                        DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
+
+                final String recommendationsSelection = DataContract.RecommendationsContract.TABLE_NAME + "." +
+                        DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
+
+                // selectionArgs should work for each table as the movie ID
+                // will be the same because we're only dealing with one movie
+
+                @Override
+                public void onClick(View v) {
+                    //ADD TO / DELETE FROM FAVORITES
+                    if (mIsFavorite) {
+                        // content uri references whole table,
+                        // favoritesSelection references row depending on column content,
+                        // selectionArgs provides specific row
+                        getContext().getContentResolver().delete(
+                                DataContract.FavoritesContract.CONTENT_URI,
+                                favoritesSelection,
+                                selectionArgs);
+                        getContext().getContentResolver().delete(
+                                DataContract.TrailersContract.CONTENT_URI,
+                                trailersSelection,
+                                selectionArgs);
+                        getContext().getContentResolver().delete(
+                                DataContract.RecommendationsContract.CONTENT_URI,
+                                recommendationsSelection,
+                                selectionArgs);
+
+                        Log.d(LOG_TAG, mMovie.title + " movie deleted from database");
+
+                    } else {
+                        ContentValues movieInfo = mMovie.getMovieDataCV();
+                        // TODO add keys and values to movieCV, then insert: rating, runtime, tagline, genres, imdb_id
+                        TextView ratingTextView =
+                                (TextView) rootView.findViewById(R.id.fragment_movie_info_rating);
+                        String rating = (String) ratingTextView.getText();
+                        movieInfo.put(DataContract.FavoritesContract.COLUMN_RATING, rating);
+                        TextView runtimeTextView =
+                                (TextView) rootView.findViewById(R.id.fragment_movie_info_runtime);
+                        String runtime = (String) runtimeTextView.getText();
+                        movieInfo.put(DataContract.FavoritesContract.COLUMN_RUNTIME, runtime);
+                        TextView taglineTextView =
+                                (TextView) rootView.findViewById(R.id.fragment_movie_info_tagline);
+                        String tagline = (String) taglineTextView.getText();
+                        movieInfo.put(DataContract.FavoritesContract.COLUMN_TAGLINE, tagline);
+                        TextView genresTextView =
+                                (TextView) rootView.findViewById(R.id.fragment_movie_info_genres);
+                        String genres = (String) genresTextView.getText();
+                        movieInfo.put(DataContract.FavoritesContract.COLUMN_GENRES, genres);
+                        TextView imdbTextView =
+                                (TextView) rootView.findViewById(R.id.fragment_movie_info_imdb_id);
+                        String imdbID = (String) imdbTextView.getText();
+                        movieInfo.put(DataContract.FavoritesContract.COLUMN_IMDB_ID, imdbID);
+
+                        getContext().getContentResolver().insert(
+                                DataContract.FavoritesContract.CONTENT_URI, movieInfo);
+
+
+                        // insert trailers to database
+                        int trailerCount = mTrailerAdapter.getItemCount();
+                        ContentValues[] trailersArr = new ContentValues[trailerCount];
+                        for (int i = 0; i < trailerCount; i++) {
+                            ContentValues trailersCV = new ContentValues();
+                            TrailerData td = mTrailerAdapter.getItem(i);
+                            trailersCV.put(
+                                    DataContract.TrailersContract.COLUMN_MOVIE_ID,
+                                    mMovie.movieId);
+                            trailersCV.put(
+                                    DataContract.TrailersContract.COLUMN_TRAILER_URL,
+                                    td.trailerPath);
+                            trailersCV.put(DataContract.TrailersContract.COLUMN_TRAILER_TITLE,
+                                    td.title);
+                            trailersArr[i] = trailersCV;
+                        }
+
+                        getContext().getContentResolver().bulkInsert(
+                                DataContract.TrailersContract.CONTENT_URI, trailersArr);
+
+
+                        // insert recommendations to database
+                        int recCount = mRecAdapter.getItemCount();
+                        ContentValues[] recsArr = new ContentValues[recCount];
+                        for (int i = 0; i < recCount; i++) {
+                            ContentValues recommendationsCV = new ContentValues();
+                            MovieData md = mRecAdapter.getItem(i);
+                            recommendationsCV.put(
+                                    DataContract.RecommendationsContract.COLUMN_MOVIE_ID,
+                                    mMovie.movieId);
+                            recommendationsCV.put(
+                                    DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_ID,
+                                    md.movieId);
+                            recommendationsCV.put(
+                                    DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_TITLE,
+                                    md.title);
+                            recsArr[i] = recommendationsCV;
+                        }
+
+                        getContext().getContentResolver().bulkInsert(
+                                DataContract.RecommendationsContract.CONTENT_URI, recsArr);
+                    }
+                    mIsFavorite = !mIsFavorite;
+                }
+            });
+        }
 
         return rootView;
     }

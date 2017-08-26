@@ -42,7 +42,7 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
         args.putInt(ARG_TAB_NUMBER, tabNumber);
         fragment.setArguments(args);
 
-        Log.d(LOG_TAG, "NEW INSTANCE OF FAVORITEFRAGMENT");
+        Log.v(LOG_TAG, "NEW INSTANCE OF FAVORITEFRAGMENT");
 
         return fragment;
     }
@@ -56,6 +56,7 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
                     "onCreate has been called");
         }
         setHasOptionsMenu(false);
+        // TODO: set true, set up option to clear database
     }
 
     /**@Override
@@ -98,15 +99,10 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
         GridView gridView = (GridView) rootView.findViewById(R.id.grid_view_posters);
 
         if (mTabNumber == 3) {
-
-            Log.d(LOG_TAG, "Tab number EQUALS 3!!!\nonCreateView has been called\nmTabNumber equals "
-                    + mTabNumber + "\n");
-
             mFavoritesAdapter = new FavoritesAdapter(getActivity(), null, 0);
             gridView.setAdapter(mFavoritesAdapter);
-
         } else {
-            Log.d(LOG_TAG, "Tab number EQUAlS " + mTabNumber + "\nhow did this happen\nmTabNumber equals " + mTabNumber);
+            Log.e(LOG_TAG, "Whadjyou do?!\nmTabNumber equals " + mTabNumber);
         }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -115,8 +111,9 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
 
                 Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
                 if (cursor != null) {
-                    Uri contentUri = DataContract.FavoritesEntry.buildMovieIdUri(
+                    Uri contentUri = DataContract.FavoritesContract.buildMovieIdUri(
                             cursor.getString(COL_MOVIE_ID)//instead (of) get position
+                            // "content://com.example.ben.moviepop.app.favorites.<movie_id>"
                     );
                     Log.d(LOG_TAG, "ITEM CLICKED at position: " + position + "\nuri created: " + contentUri.toString());
                     Intent intent = new Intent(getActivity(), MovieInfoActivity.class)
@@ -133,14 +130,12 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         getLoaderManager().initLoader(FAVORITES_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
-        Log.d(LOG_TAG, "onActivityCreated has been called\nFavorites LOADER is INITIATED!!!!");
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        Log.d(LOG_TAG, "onCreateLoader has been called\nFavorites LOADER is CREATED!!!!");
         return new CursorLoader(getActivity(),
-                DataContract.FavoritesEntry.CONTENT_URI,
+                DataContract.FavoritesContract.CONTENT_URI,
                 null,//FAVORITES_COLUMNS,
                 null,
                 null,
@@ -150,12 +145,16 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(LOG_TAG, "onLoadFinished initiated\nCursor has items: " + data.getCount());
-        mFavoritesAdapter.swapCursor(data);
+        if (mFavoritesAdapter != null) {
+            mFavoritesAdapter.swapCursor(data);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-        mFavoritesAdapter.swapCursor(null);
-        Log.d(LOG_TAG, "onLoaderReset initiated\ncursor for FavoritesAdapter == null");
+        if (mFavoritesAdapter != null) {
+            mFavoritesAdapter.swapCursor(null);
+            Log.d(LOG_TAG, "onLoaderReset initiated\ncursor for FavoritesAdapter == null");
+        }
     }
 }

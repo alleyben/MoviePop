@@ -29,37 +29,12 @@ public class MoviesAdapter extends ArrayAdapter<MovieData> {
 
         Context context = getContext();
 
-        if (context.equals(MainActivity.class)) {
-
-        }
-
         if (convertView == null) {
-            if (context.getClass().equals(MainActivity.class)) {
-                convertView = LayoutInflater.from(context)
-                        .inflate(R.layout.grid_item_poster, parent, false);
-            } else if (context.getClass().equals(MovieInfoActivity.class)) {
-                convertView = LayoutInflater.from(context)
-                        .inflate(R.layout.recycler_item_trailer_and_recs, parent, false);
-            } else {
-                Log.e(LOG_TAG, "Context is " + context.getClass().getSimpleName() +
-                        "\nDoes not match required context\n");
-            }
+            convertView = LayoutInflater.from(context)
+                    .inflate(R.layout.grid_item_poster, parent, false);
         }
 
-        ImageView posterView = null;
-
-        if (context.getClass().equals(MainActivity.class)) {
-            posterView = (ImageView) convertView.findViewById(R.id.grid_item_poster_imagebtn);
-        } else if (context.getClass().equals(MovieInfoActivity.class)) {
-            posterView = (ImageView) convertView.findViewById(R.id.recycler_item_poster_imagebtn);
-
-            TextView titleView = (TextView) convertView.findViewById(R.id.recycler_item_poster_title);
-            titleView.setText(movieData.title);
-
-        } else {
-            Log.e(LOG_TAG, "Context is " + context.getClass().getSimpleName() +
-                    "\nDoes not match required context\n");
-        }
+        ImageView posterView = (ImageView) convertView.findViewById(R.id.grid_item_poster_imagebtn);
 
         // sample url:
         // http://image.tmdb.org/t/p/w185/nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
