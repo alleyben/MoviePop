@@ -25,6 +25,8 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.ben.movieapp.adapters.RecommendationCursorAdapter;
+import com.example.ben.movieapp.adapters.TrailerCursorAdapter;
 import com.example.ben.movieapp.database.DataContract;
 import com.squareup.picasso.Picasso;
 
@@ -37,8 +39,8 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
     private Uri mRecommendationsUri;
     private MovieData mMovie;
     static final String DETAIL_URI = "URI";
-    private FavoritesRecommendationsAdapter mFavRecAdapter;
-    private FavoritesTrailerAdapter mFavTrailerAdapter;
+    private TrailerCursorAdapter mTrailerCursorAdapter;
+    private RecommendationCursorAdapter mRecCursorAdapter;
 
     private static final int DETAILS_LOADER = 0;
     private static final int TRAILERS_LOADER = 1;
@@ -71,7 +73,8 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
             DataContract.RecommendationsContract._ID,
             DataContract.RecommendationsContract.COLUMN_MOVIE_ID,
             DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_ID,
-            DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_TITLE
+            DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_TITLE,
+            DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_POSTER_URL
     };
 
     static final int COL_DETAILS_ROW_ID = 0;
@@ -87,15 +90,16 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
     static final int COL_DETAILS_GENRES = 10;
     static final int COL_DETAILS_IMDB_ID = 11;
 
-    static final int COL_TRAILER_ROW_ID = 0;
-    static final int COL_TRAILER_MOVIE_ID = 1;
-    static final int COL_TRAILER_URL = 2;
-    static final int COL_TRAILER_TITLE = 3;
+    public static final int COL_TRAILER_ROW_ID = 0;
+    public static final int COL_TRAILER_MOVIE_ID = 1;
+    public static final int COL_TRAILER_URL = 2;
+    public static final int COL_TRAILER_TITLE = 3;
 
-    static final int COL_RECOMMENDATIONS_ROW_ID = 0;
-    static final int COL_RECOMMENDATIONS_MOVIE_ID = 1;
-    static final int COL_RECOMMENDATIONS_SIMILAR_MOVIE_ID = 2;
-    static final int COL_RECOMMENDATIONS_SIMILAR_MOVIE_TITLE = 3;
+    public static final int COL_RECOMMENDATIONS_ROW_ID = 0;
+    public static final int COL_RECOMMENDATIONS_MOVIE_ID = 1;
+    public static final int COL_RECOMMENDATIONS_SIMILAR_MOVIE_ID = 2;
+    public static final int COL_RECOMMENDATIONS_SIMILAR_MOVIE_TITLE = 3;
+    public static final int COL_RECOMMENDATIONS_SIMILAR_MOVIE_POSTER_URL = 4;
 
     private ImageView mPosterView;
     private TextView mTitleView;
@@ -150,14 +154,14 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 
         LinearLayoutManager trailersLayoutManager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mFavTrailerAdapter = new FavoritesTrailerAdapter(getActivity(), null, 0);
+        mTrailerCursorAdapter = new TrailerCursorAdapter(getActivity(), null);
         mTrailersView.setLayoutManager(trailersLayoutManager);
-//        mTrailersView.setAdapter(mFavTrailerAdapter);
+        mTrailersView.setAdapter(mTrailerCursorAdapter);
         LinearLayoutManager recsLayoutManager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        mFavRecAdapter = new FavoritesRecommendationsAdapter(getActivity(), null, 0);
+        mRecCursorAdapter = new RecommendationCursorAdapter(getActivity(), null);
         mRecsView.setLayoutManager(recsLayoutManager);
-//        mRecsView.setAdapter(mFavRecAdapter);
+        mRecsView.setAdapter(mRecCursorAdapter);
 
 //        mTrailersView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 //            @Override
@@ -418,9 +422,9 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 
                 case TRAILERS_LOADER:
                     // trailers
-                    if (mFavTrailerAdapter != null) {
+                    if (mTrailerCursorAdapter != null) {
                         Log.d(LOG_TAG, "Trailers Loader ID\nID == " + loader.getId());
-                        mFavTrailerAdapter.swapCursor(data);
+                        mTrailerCursorAdapter.swapCursor(data);
                     } else {
                         Log.e(LOG_TAG, "\nmFavTrailerAdapter is null");
                     }
@@ -429,9 +433,9 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 
                 case RECOMMENDATIONS_LOADER:
                     // recommendations
-                    if (mFavRecAdapter != null) {
+                    if (mRecCursorAdapter != null) {
                         Log.d(LOG_TAG, "Recommendations Loader ID\nID == " + loader.getId());
-                        mFavRecAdapter.swapCursor(data);
+                        mRecCursorAdapter.swapCursor(data);
                     } else {
                         Log.e(LOG_TAG, "\nmFavRecAdapter is null");
                     }

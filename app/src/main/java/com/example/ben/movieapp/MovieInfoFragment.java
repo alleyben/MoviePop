@@ -301,12 +301,16 @@ public class MovieInfoFragment extends Fragment {
                             TrailerData td = mTrailerAdapter.getItem(i);
                             trailersCV.put(
                                     DataContract.TrailersContract.COLUMN_MOVIE_ID,
-                                    mMovie.movieId);
+                                    mMovie.movieId
+                            );
                             trailersCV.put(
                                     DataContract.TrailersContract.COLUMN_TRAILER_URL,
-                                    td.trailerPath);
-                            trailersCV.put(DataContract.TrailersContract.COLUMN_TRAILER_TITLE,
-                                    td.title);
+                                    td.trailerPath
+                            );
+                            trailersCV.put(
+                                    DataContract.TrailersContract.COLUMN_TRAILER_TITLE,
+                                    td.title
+                            );
                             trailersArr[i] = trailersCV;
                         }
 
@@ -322,13 +326,20 @@ public class MovieInfoFragment extends Fragment {
                             MovieData md = mRecAdapter.getItem(i);
                             recommendationsCV.put(
                                     DataContract.RecommendationsContract.COLUMN_MOVIE_ID,
-                                    mMovie.movieId);
+                                    mMovie.movieId
+                            );
                             recommendationsCV.put(
                                     DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_ID,
-                                    md.movieId);
+                                    md.movieId
+                            );
                             recommendationsCV.put(
                                     DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_TITLE,
-                                    md.title);
+                                    md.title
+                            );
+                            recommendationsCV.put(
+                                    DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_POSTER_URL,
+                                    md.posterPath
+                            );
                             recsArr[i] = recommendationsCV;
                         }
 

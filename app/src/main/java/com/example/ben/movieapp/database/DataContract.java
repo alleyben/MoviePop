@@ -97,6 +97,7 @@ public class DataContract {
         public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String COLUMN_SIMILAR_MOVIE_ID = "similar_movie_id";
         public static final String COLUMN_SIMILAR_MOVIE_TITLE = "similar_movie_title";
+        public static final String COLUMN_SIMILAR_MOVIE_POSTER_URL = "similar_movie_poster_url";
 
         public static Uri buildInsertRecommendationsUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
