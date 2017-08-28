@@ -38,6 +38,7 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
     private Uri mTrailersUri;
     private Uri mRecommendationsUri;
     private MovieData mMovie;
+    private boolean mIsFavorite = true;
     static final String DETAIL_URI = "URI";
     private TrailerCursorAdapter mTrailerCursorAdapter;
     private RecommendationCursorAdapter mRecCursorAdapter;
@@ -370,11 +371,6 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                     // SET STAR FAVORITE BUTTON
                     mStarFavorite.setChecked(true);
 
-                    String[] projection = {DataContract.FavoritesContract.COLUMN_MOVIE_ID};
-                    final String selection = DataContract.FavoritesContract.TABLE_NAME +
-                            "." + DataContract.FavoritesContract.COLUMN_MOVIE_ID + " = ? ";
-                    final String[] selectionArgs = {data.getString(COL_DETAILS_MOVIE_ID)};
-
                     String[] movieArr =
                             {title, overview, POSTER_PATH, score, date, data.getString(COL_DETAILS_MOVIE_ID)};
 
@@ -382,39 +378,10 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 
                     mStarFavorite.setOnClickListener(new View.OnClickListener() {
 
-                        boolean isFavorite = true;
-
-                        final String trailersSelection = DataContract.TrailersContract.TABLE_NAME + "." +
-                                DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
-
-                        final String recommendationsSelection = DataContract.RecommendationsContract.TABLE_NAME + "." +
-                                DataContract.RecommendationsContract.COLUMN_MOVIE_ID + " = ? ";
-
                         @Override
                         public void onClick(View v) {
-                            //ADD TO / DELETE FROM FAVORITES
-                            // TODO: update insert and delete
-                            if (isFavorite) {
-                                // content uri references whole table, selection references row, selectionArgs provides specific row
-                                getContext().getContentResolver().delete(
-                                        DataContract.FavoritesContract.CONTENT_URI, selection, selectionArgs);
-                                Log.d(LOG_TAG, title + " movie deleted from database");
-                                getContext().getContentResolver().delete(
-                                        DataContract.TrailersContract.CONTENT_URI,
-                                        trailersSelection,
-                                        selectionArgs);
-                                getContext().getContentResolver().delete(
-                                        DataContract.RecommendationsContract.CONTENT_URI,
-                                        recommendationsSelection,
-                                        selectionArgs);
-                            } else {
-//                                ContentValues movieInfo = mMovie.getMovieDataCV();
-//                                //TODO: get all the requisite data, see movieinfofrag for details
-//                                //make utility to do it?
-//                                getContext().getContentResolver().insert(
-//                                        DataContract.FavoritesContract.CONTENT_URI, movieInfo);
-                            }
-//                            isFavorite = !isFavorite;
+                            //ADD TO / DELETE FROM FAVORITES onDestroyView
+                            mIsFavorite = !mIsFavorite;
                         }
                     });
 
@@ -464,6 +431,45 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                     Log.e(LOG_TAG, "Loader id not recognized\nID == " + loader.getId());
             }
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (!mIsFavorite) {
+
+            String[] projection = {DataContract.FavoritesContract.COLUMN_MOVIE_ID};
+
+            final String selection = DataContract.FavoritesContract.TABLE_NAME +
+                    "." + DataContract.FavoritesContract.COLUMN_MOVIE_ID + " = ? ";
+
+            final String trailersSelection = DataContract.TrailersContract.TABLE_NAME + "." +
+                    DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
+
+            final String recommendationsSelection = DataContract.RecommendationsContract.TABLE_NAME + "." +
+                    DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
+
+            final String[] selectionArgs = {mMovie.movieId};//
+
+            // content uri references whole table, selection references row, selectionArgs provides specific row
+            getContext().getContentResolver().delete(
+                    DataContract.FavoritesContract.CONTENT_URI, selection, selectionArgs);
+            Log.d(LOG_TAG, mMovie.title + " movie deleted from database");//
+            getContext().getContentResolver().delete(
+                    DataContract.TrailersContract.CONTENT_URI,
+                    trailersSelection,
+                    selectionArgs);
+            getContext().getContentResolver().delete(
+                    DataContract.RecommendationsContract.CONTENT_URI,
+                    recommendationsSelection,
+                    selectionArgs);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(LOG_TAG, "ON DESTROY VIEW CALLED");
     }
 
     @Override
