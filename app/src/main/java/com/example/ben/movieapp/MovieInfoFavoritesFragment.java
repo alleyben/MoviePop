@@ -467,12 +467,6 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(LOG_TAG, "ON DESTROY VIEW CALLED");
-    }
-
-    @Override
     public void onLoaderReset(Loader<Cursor> loader) {
 
     }
