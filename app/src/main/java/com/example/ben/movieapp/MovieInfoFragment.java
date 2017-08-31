@@ -29,9 +29,13 @@ import java.util.ArrayList;
 public class MovieInfoFragment extends Fragment {
 
     private static final String LOG_TAG = MovieInfoFragment.class.getSimpleName();
+    private View mRootView;
     private MovieData mMovie;
     private ContentValues mMovieDataCV;
     private boolean mIsFavorite;
+    private boolean mIsInDatabase;
+    private String mFavoritesSelection;
+    private String[] mSelectionArgs = new String[1];
     private RecommendationsAdapter mRecAdapter;
     private TrailerAdapter mTrailerAdapter;
 
@@ -46,22 +50,22 @@ public class MovieInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View rootView = inflater.inflate(R.layout.fragment_movie_info, container, false);
+        mRootView = inflater.inflate(R.layout.fragment_movie_info, container, false);
 
-        ImageView posterView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_poster);
-        TextView titleView = (TextView) rootView.findViewById(R.id.fragment_movie_info_title);
-        TextView overviewView = (TextView) rootView.findViewById(R.id.fragment_movie_info_overview);
-        TextView scoreView = (TextView) rootView.findViewById(R.id.fragment_movie_info_avg_score);
-        TextView dateView = (TextView) rootView.findViewById(R.id.fragment_movie_info_date);
-        ImageView imdbImageView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_imdb_button);
-        ImageView googleImageView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_google_button);
+        ImageView posterView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_poster);
+        TextView titleView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_title);
+        TextView overviewView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_overview);
+        TextView scoreView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_avg_score);
+        TextView dateView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_date);
+        ImageView imdbImageView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_imdb_button);
+        ImageView googleImageView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_google_button);
         ImageView roTomatoesImageView =
-                (ImageView) rootView.findViewById(R.id.fragment_movie_info_rotten_tomatoes_button);
+                (ImageView) mRootView.findViewById(R.id.fragment_movie_info_rotten_tomatoes_button);
         final RecyclerView trailersView =
-                (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_yt_videos);
+                (RecyclerView) mRootView.findViewById(R.id.fragment_movie_info_yt_videos);
         final RecyclerView recsView =
-                (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_movie_recs);
-        CheckBox starFavorite = (CheckBox) rootView.findViewById(R.id.star_button);
+                (RecyclerView) mRootView.findViewById(R.id.fragment_movie_info_movie_recs);
+        CheckBox starFavorite = (CheckBox) mRootView.findViewById(R.id.star_button);
 
 
         Intent intent = getActivity().getIntent();
@@ -73,12 +77,12 @@ public class MovieInfoFragment extends Fragment {
             // decided not to move fetching of all details here in order to space out fetching
             // MovieData structure stays intact for now
             FetchDetailsTask detailsTask = new FetchDetailsTask();
-            detailsTask.setView(rootView);
+            detailsTask.setView(mRootView);
             detailsTask.execute(mMovie.movieId);
 
             // get mpaa rating
             FetchRatingTask ratingTask = new FetchRatingTask();
-            ratingTask.setView(rootView);
+            ratingTask.setView(mRootView);
             ratingTask.execute(mMovie.movieId);
 
             // TODO: make following changes
@@ -116,7 +120,7 @@ public class MovieInfoFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     final String IMDB_BASE_URL = "http://www.imdb.com/title";
-                    TextView tv = (TextView) rootView.findViewById(R.id.fragment_movie_info_imdb_id);
+                    TextView tv = (TextView) mRootView.findViewById(R.id.fragment_movie_info_imdb_id);
                     final String IMDB_ID = (String) tv.getText();
                     // example:
                     // "http://www.imdb.com/title/<imdb_id>"
@@ -174,8 +178,6 @@ public class MovieInfoFragment extends Fragment {
                 @Override
                 public void onItemClick(View itemView, int position) {
                     TrailerData trailerData = mTrailerAdapter.getItem(position);
-                    Log.d(LOG_TAG, "Youtube video has been clicked: " + trailerData.toString() +
-                            "\nat position: " + position + "\n");
 
                     final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
                     final String TRAILER_PATH = trailerData.trailerPath;
@@ -216,142 +218,142 @@ public class MovieInfoFragment extends Fragment {
 
             //CHECK FROM FAVORITES
             String[] projection = {DataContract.FavoritesContract.COLUMN_MOVIE_ID};
-            final String favoritesSelection = DataContract.FavoritesContract.TABLE_NAME +
+            mFavoritesSelection = DataContract.FavoritesContract.TABLE_NAME +
                     "." + DataContract.FavoritesContract.COLUMN_MOVIE_ID + " = ? ";
-            final String[] selectionArgs = {mMovie.movieId};
+            mSelectionArgs[0] = mMovie.movieId;
+            // selectionArgs should work for each table as the movie ID
+            // will be the same because we're only dealing with one movie
 
             final Cursor cursor = getContext().getContentResolver().query(
                     DataContract.FavoritesContract.buildMovieIdUri(mMovie.movieId),
                     projection,
-                    favoritesSelection,
-                    selectionArgs,
+                    mFavoritesSelection,
+                    mSelectionArgs,
                     null);
 
             mIsFavorite = (cursor.getCount() > 0);
+            mIsInDatabase = mIsFavorite;
 
             // Get star favorite button
             starFavorite.setChecked(mIsFavorite);
 
             starFavorite.setOnClickListener(new View.OnClickListener() {
-
-                final String trailersSelection = DataContract.TrailersContract.TABLE_NAME + "." +
-                        DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
-
-                final String recommendationsSelection = DataContract.RecommendationsContract.TABLE_NAME + "." +
-                        DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
-
-                // selectionArgs should work for each table as the movie ID
-                // will be the same because we're only dealing with one movie
-
                 @Override
-                public void onClick(View v) {
-                    //ADD TO / DELETE FROM FAVORITES
-                    if (mIsFavorite) {
-                        // content uri references whole table,
-                        // favoritesSelection references row depending on column content,
-                        // selectionArgs provides specific row
-                        getContext().getContentResolver().delete(
-                                DataContract.FavoritesContract.CONTENT_URI,
-                                favoritesSelection,
-                                selectionArgs);
-                        getContext().getContentResolver().delete(
-                                DataContract.TrailersContract.CONTENT_URI,
-                                trailersSelection,
-                                selectionArgs);
-                        getContext().getContentResolver().delete(
-                                DataContract.RecommendationsContract.CONTENT_URI,
-                                recommendationsSelection,
-                                selectionArgs);
-
-                        Log.d(LOG_TAG, mMovie.title + " movie deleted from database");
-
-                    } else {
-                        ContentValues movieInfo = mMovie.getMovieDataCV();
-                        // TODO add keys and values to movieCV, then insert: rating, runtime, tagline, genres, imdb_id
-                        TextView ratingTextView =
-                                (TextView) rootView.findViewById(R.id.fragment_movie_info_rating);
-                        String rating = (String) ratingTextView.getText();
-                        movieInfo.put(DataContract.FavoritesContract.COLUMN_RATING, rating);
-                        TextView runtimeTextView =
-                                (TextView) rootView.findViewById(R.id.fragment_movie_info_runtime);
-                        String runtime = (String) runtimeTextView.getText();
-                        movieInfo.put(DataContract.FavoritesContract.COLUMN_RUNTIME, runtime);
-                        TextView taglineTextView =
-                                (TextView) rootView.findViewById(R.id.fragment_movie_info_tagline);
-                        String tagline = (String) taglineTextView.getText();
-                        movieInfo.put(DataContract.FavoritesContract.COLUMN_TAGLINE, tagline);
-                        TextView genresTextView =
-                                (TextView) rootView.findViewById(R.id.fragment_movie_info_genres);
-                        String genres = (String) genresTextView.getText();
-                        movieInfo.put(DataContract.FavoritesContract.COLUMN_GENRES, genres);
-                        TextView imdbTextView =
-                                (TextView) rootView.findViewById(R.id.fragment_movie_info_imdb_id);
-                        String imdbID = (String) imdbTextView.getText();
-                        movieInfo.put(DataContract.FavoritesContract.COLUMN_IMDB_ID, imdbID);
-
-                        getContext().getContentResolver().insert(
-                                DataContract.FavoritesContract.CONTENT_URI, movieInfo);
-
-
-                        // insert trailers to database
-                        int trailerCount = mTrailerAdapter.getItemCount();
-                        ContentValues[] trailersArr = new ContentValues[trailerCount];
-                        for (int i = 0; i < trailerCount; i++) {
-                            ContentValues trailersCV = new ContentValues();
-                            TrailerData td = mTrailerAdapter.getItem(i);
-                            trailersCV.put(
-                                    DataContract.TrailersContract.COLUMN_MOVIE_ID,
-                                    mMovie.movieId
-                            );
-                            trailersCV.put(
-                                    DataContract.TrailersContract.COLUMN_TRAILER_URL,
-                                    td.trailerPath
-                            );
-                            trailersCV.put(
-                                    DataContract.TrailersContract.COLUMN_TRAILER_TITLE,
-                                    td.title
-                            );
-                            trailersArr[i] = trailersCV;
-                        }
-
-                        getContext().getContentResolver().bulkInsert(
-                                DataContract.TrailersContract.CONTENT_URI, trailersArr);
-
-
-                        // insert recommendations to database
-                        int recCount = mRecAdapter.getItemCount();
-                        ContentValues[] recsArr = new ContentValues[recCount];
-                        for (int i = 0; i < recCount; i++) {
-                            ContentValues recommendationsCV = new ContentValues();
-                            MovieData md = mRecAdapter.getItem(i);
-                            recommendationsCV.put(
-                                    DataContract.RecommendationsContract.COLUMN_MOVIE_ID,
-                                    mMovie.movieId
-                            );
-                            recommendationsCV.put(
-                                    DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_ID,
-                                    md.movieId
-                            );
-                            recommendationsCV.put(
-                                    DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_TITLE,
-                                    md.title
-                            );
-                            recommendationsCV.put(
-                                    DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_POSTER_URL,
-                                    md.posterPath
-                            );
-                            recsArr[i] = recommendationsCV;
-                        }
-
-                        getContext().getContentResolver().bulkInsert(
-                                DataContract.RecommendationsContract.CONTENT_URI, recsArr);
-                    }
-                    mIsFavorite = !mIsFavorite;
-                }
+                public void onClick(View v) { mIsFavorite = !mIsFavorite; }
             });
         }
 
-        return rootView;
+        return mRootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mIsInDatabase && !mIsFavorite) {
+            final String trailersSelection = DataContract.TrailersContract.TABLE_NAME + "." +
+                    DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
+
+            final String recommendationsSelection = DataContract.RecommendationsContract.TABLE_NAME + "." +
+                    DataContract.TrailersContract.COLUMN_MOVIE_ID + " = ? ";
+            // content uri references whole table,
+            // favoritesSelection references row depending on column content,
+            // selectionArgs provides specific row
+            getContext().getContentResolver().delete(
+                    DataContract.FavoritesContract.CONTENT_URI,
+                    mFavoritesSelection,
+                    mSelectionArgs);
+            getContext().getContentResolver().delete(
+                    DataContract.TrailersContract.CONTENT_URI,
+                    trailersSelection,
+                    mSelectionArgs);
+            getContext().getContentResolver().delete(
+                    DataContract.RecommendationsContract.CONTENT_URI,
+                    recommendationsSelection,
+                    mSelectionArgs);
+
+            Log.d(LOG_TAG, mMovie.title + " movie deleted from database");
+
+        } else if (!mIsInDatabase && mIsFavorite) {
+            ContentValues movieInfo = mMovie.getMovieDataCV();
+            // TODO add keys and values to movieCV, then insert: rating, runtime, tagline, genres, imdb_id
+            TextView ratingTextView =
+                    (TextView) mRootView.findViewById(R.id.fragment_movie_info_rating);
+            String rating = (String) ratingTextView.getText();
+            movieInfo.put(DataContract.FavoritesContract.COLUMN_RATING, rating);
+            TextView runtimeTextView =
+                    (TextView) mRootView.findViewById(R.id.fragment_movie_info_runtime);
+            String runtime = (String) runtimeTextView.getText();
+            movieInfo.put(DataContract.FavoritesContract.COLUMN_RUNTIME, runtime);
+            TextView taglineTextView =
+                    (TextView) mRootView.findViewById(R.id.fragment_movie_info_tagline);
+            String tagline = (String) taglineTextView.getText();
+            movieInfo.put(DataContract.FavoritesContract.COLUMN_TAGLINE, tagline);
+            TextView genresTextView =
+                    (TextView) mRootView.findViewById(R.id.fragment_movie_info_genres);
+            String genres = (String) genresTextView.getText();
+            movieInfo.put(DataContract.FavoritesContract.COLUMN_GENRES, genres);
+            TextView imdbTextView =
+                    (TextView) mRootView.findViewById(R.id.fragment_movie_info_imdb_id);
+            String imdbID = (String) imdbTextView.getText();
+            movieInfo.put(DataContract.FavoritesContract.COLUMN_IMDB_ID, imdbID);
+
+            getContext().getContentResolver().insert(
+                    DataContract.FavoritesContract.CONTENT_URI, movieInfo);
+
+
+            // insert trailers to database
+            int trailerCount = mTrailerAdapter.getItemCount();
+            ContentValues[] trailersArr = new ContentValues[trailerCount];
+            for (int i = 0; i < trailerCount; i++) {
+                ContentValues trailersCV = new ContentValues();
+                TrailerData td = mTrailerAdapter.getItem(i);
+                trailersCV.put(
+                        DataContract.TrailersContract.COLUMN_MOVIE_ID,
+                        mMovie.movieId
+                );
+                trailersCV.put(
+                        DataContract.TrailersContract.COLUMN_TRAILER_URL,
+                        td.trailerPath
+                );
+                trailersCV.put(
+                        DataContract.TrailersContract.COLUMN_TRAILER_TITLE,
+                        td.title
+                );
+                trailersArr[i] = trailersCV;
+            }
+
+            getContext().getContentResolver().bulkInsert(
+                    DataContract.TrailersContract.CONTENT_URI, trailersArr);
+
+
+            // insert recommendations to database
+            int recCount = mRecAdapter.getItemCount();
+            ContentValues[] recsArr = new ContentValues[recCount];
+            for (int i = 0; i < recCount; i++) {
+                ContentValues recommendationsCV = new ContentValues();
+                MovieData md = mRecAdapter.getItem(i);
+                recommendationsCV.put(
+                        DataContract.RecommendationsContract.COLUMN_MOVIE_ID,
+                        mMovie.movieId
+                );
+                recommendationsCV.put(
+                        DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_ID,
+                        md.movieId
+                );
+                recommendationsCV.put(
+                        DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_TITLE,
+                        md.title
+                );
+                recommendationsCV.put(
+                        DataContract.RecommendationsContract.COLUMN_SIMILAR_MOVIE_POSTER_URL,
+                        md.posterPath
+                );
+                recsArr[i] = recommendationsCV;
+            }
+
+            getContext().getContentResolver().bulkInsert(
+                    DataContract.RecommendationsContract.CONTENT_URI, recsArr);
+        }
     }
 
     @Override
