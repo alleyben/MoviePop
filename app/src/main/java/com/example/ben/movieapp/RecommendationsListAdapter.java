@@ -14,21 +14,21 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class RecommendationsAdapter extends RecyclerView.Adapter<RecommendationsAdapter.ViewHolder> {
+public class RecommendationsListAdapter extends RecyclerView.Adapter<RecommendationsListAdapter.ViewHolder> {
 
-    private final String LOG_TAG = RecommendationsAdapter.class.getSimpleName();
+    private final String LOG_TAG = RecommendationsListAdapter.class.getSimpleName();
 
     private Context mContext;
     private OnItemClickListener mListener;
     private List<MovieData> mMovieList;
 
-    public RecommendationsAdapter(Context context, List<MovieData> movies) {
+    public RecommendationsListAdapter(Context context, List<MovieData> movies) {
         mContext = context;
         mMovieList = movies;
     }
 
     @Override
-    public RecommendationsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         Context context = parent.getContext(); // i.e. get movieinfoactivity from parent which is... movieinfofragment?
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -39,7 +39,7 @@ public class RecommendationsAdapter extends RecyclerView.Adapter<Recommendations
     }
 
     @Override
-    public void onBindViewHolder(RecommendationsAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         MovieData movieData = mMovieList.get(position);
         TextView textView = holder.titleTextView;
         textView.setText(movieData.title);

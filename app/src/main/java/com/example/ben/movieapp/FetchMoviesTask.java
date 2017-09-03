@@ -21,7 +21,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
     private final String LOG_TAG = FetchMoviesTask.class.getSimpleName();
 
     private MoviesAdapter mMovieAdapter;
-    private RecommendationsAdapter mRecommendationsAdapter;
+    private RecommendationsListAdapter mRecommendationsListAdapter;
     private boolean mRecBool = false;
 
     @Override
@@ -191,7 +191,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
     protected void onPostExecute(MovieData[] result) {
         if (result != null) {
             if (mRecBool) {
-                mRecommendationsAdapter.addArrayItems(Arrays.asList(result));
+                mRecommendationsListAdapter.addArrayItems(Arrays.asList(result));
 
             } else {
                 mMovieAdapter.clear();
@@ -204,8 +204,8 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
         mMovieAdapter = adapter;
     }
 
-    public void setRecsAdapter(RecommendationsAdapter adapter) {
-        mRecommendationsAdapter = adapter;
+    public void setRecsAdapter(RecommendationsListAdapter adapter) {
+        mRecommendationsListAdapter = adapter;
     }
 
     private String formatDate(String jsonDate) {

@@ -21,7 +21,7 @@ public class FetchVideosTask extends AsyncTask<String, Void, List<TrailerData>> 
 
     private final String LOG_TAG = FetchVideosTask.class.getSimpleName();
 
-    private TrailerAdapter mVidAdapter;
+    private TrailerListAdapter mVidAdapter;
 
     @Override
     protected List<TrailerData> doInBackground(String... params) {
@@ -142,11 +142,11 @@ public class FetchVideosTask extends AsyncTask<String, Void, List<TrailerData>> 
             Log.d(LOG_TAG, "Trailer Adapter correctly set");
             mVidAdapter.addArrayItems(trailerArr);
         } else {
-            Log.e(LOG_TAG, "You forgot to set the RecommendationsAdapter, you fucktard");
+            Log.e(LOG_TAG, "You forgot to set the RecommendationsListAdapter, you fucktard");
         }
     }
 
-    public void setAdapter(TrailerAdapter adapter) {
+    public void setAdapter(TrailerListAdapter adapter) {
         mVidAdapter = adapter;
     }
 }

@@ -36,8 +36,8 @@ public class MovieInfoFragment extends Fragment {
     private boolean mIsInDatabase;
     private String mFavoritesSelection;
     private String[] mSelectionArgs = new String[1];
-    private RecommendationsAdapter mRecAdapter;
-    private TrailerAdapter mTrailerAdapter;
+    private RecommendationsListAdapter mRecAdapter;
+    private TrailerListAdapter mTrailerListAdapter;
 
     // TODO backdrop_path with title over it, on upward move, backdrop fades or flows up, title flows up to header and sticks, info comes up into foreground
 
@@ -167,17 +167,17 @@ public class MovieInfoFragment extends Fragment {
             // get trailers
             LinearLayoutManager trailersLayoutManager =
                     new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-            mTrailerAdapter = new TrailerAdapter(getContext(), new ArrayList<TrailerData>());
+            mTrailerListAdapter = new TrailerListAdapter(getContext(), new ArrayList<TrailerData>());
             trailersView.setLayoutManager(trailersLayoutManager);
             FetchVideosTask fetchTrailers = new FetchVideosTask();
-            fetchTrailers.setAdapter(mTrailerAdapter);
+            fetchTrailers.setAdapter(mTrailerListAdapter);
             fetchTrailers.execute(mMovie.movieId);
-            trailersView.setAdapter(mTrailerAdapter);
+            trailersView.setAdapter(mTrailerListAdapter);
 
-            mTrailerAdapter.setOnItemClickListener(new TrailerAdapter.OnItemClickListener() {
+            mTrailerListAdapter.setOnItemClickListener(new TrailerListAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View itemView, int position) {
-                    TrailerData trailerData = mTrailerAdapter.getItem(position);
+                    TrailerData trailerData = mTrailerListAdapter.getItem(position);
 
                     final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
                     final String TRAILER_PATH = trailerData.trailerPath;
@@ -197,14 +197,14 @@ public class MovieInfoFragment extends Fragment {
             // get similar movie recommendations
             LinearLayoutManager recsLayoutManager =
                     new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-            mRecAdapter = new RecommendationsAdapter(getContext(), new ArrayList<MovieData>());
+            mRecAdapter = new RecommendationsListAdapter(getContext(), new ArrayList<MovieData>());
             recsView.setLayoutManager(recsLayoutManager);
             FetchMoviesTask fetchMovies = new FetchMoviesTask();
             fetchMovies.setRecsAdapter(mRecAdapter);
             fetchMovies.execute(mMovie.movieId);
             recsView.setAdapter(mRecAdapter);
 
-            mRecAdapter.setOnItemClickListener(new RecommendationsAdapter.OnItemClickListener() {
+            mRecAdapter.setOnItemClickListener(new RecommendationsListAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View itemView, int position) {
                     MovieData movieData = mRecAdapter.getItem(position);
@@ -302,11 +302,11 @@ public class MovieInfoFragment extends Fragment {
 
 
             // insert trailers to database
-            int trailerCount = mTrailerAdapter.getItemCount();
+            int trailerCount = mTrailerListAdapter.getItemCount();
             ContentValues[] trailersArr = new ContentValues[trailerCount];
             for (int i = 0; i < trailerCount; i++) {
                 ContentValues trailersCV = new ContentValues();
-                TrailerData td = mTrailerAdapter.getItem(i);
+                TrailerData td = mTrailerListAdapter.getItem(i);
                 trailersCV.put(
                         DataContract.TrailersContract.COLUMN_MOVIE_ID,
                         mMovie.movieId

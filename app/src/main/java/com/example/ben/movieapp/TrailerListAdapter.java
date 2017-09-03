@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,32 +15,29 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 
-public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.ViewHolder> {
+public class TrailerListAdapter extends RecyclerView.Adapter<TrailerListAdapter.ViewHolder> {
 
-    private final String LOG_TAG = TrailerAdapter.class.getSimpleName();
+    private final String LOG_TAG = TrailerListAdapter.class.getSimpleName();
 
     private Context mContext;
     private List<TrailerData> mTrailerList;
     private OnItemClickListener mListener;
 
-    public TrailerAdapter(Context context, List<TrailerData> trailers) {
+    public TrailerListAdapter(Context context, List<TrailerData> trailers) {
         mContext = context;
         mTrailerList = trailers;
     }
 
     @Override
-    public TrailerAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-
-        View trailerView = inflater.inflate(R.layout.recycler_item_trailer_and_recs, parent, false);
-
-        return new ViewHolder(trailerView);
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View trailerItemView = inflater
+                .inflate(R.layout.recycler_item_trailer_and_recs, parent, false);
+        return new ViewHolder(trailerItemView);
     }
 
     @Override
-    public void onBindViewHolder(TrailerAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
 
         TrailerData trailerData = mTrailerList.get(position);
         TextView textView = holder.titleTextView;

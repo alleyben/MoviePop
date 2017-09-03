@@ -25,23 +25,12 @@ public class TrailerCursorAdapter extends CursorRecyclerViewAdapter<TrailerCurso
         mContext = context;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final ImageView posterImageView;
-        public final TextView titleTextView;
-
-        public ViewHolder(View view) {
-            super(view);
-            posterImageView = (ImageView) view.findViewById(R.id.recycler_item_poster_imagebtn);
-            titleTextView = (TextView) view.findViewById(R.id.recycler_item_poster_title);
-        }
-    }
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        View trailerItemView = inflater
                 .inflate(R.layout.recycler_item_trailer_and_recs, parent, false);
-        ViewHolder vh = new ViewHolder(itemView);
-        return vh;
+        return new ViewHolder(trailerItemView);
     }
 
     @Override
@@ -65,5 +54,18 @@ public class TrailerCursorAdapter extends CursorRecyclerViewAdapter<TrailerCurso
         Log.d(LOG_TAG, builtUri.toString());
 
         Picasso.with(mContext).load(builtUri).into(posterView);
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        public final ImageView posterImageView;
+        public final TextView titleTextView;
+
+        public ViewHolder(View view) {
+            super(view);
+            posterImageView = (ImageView) view.findViewById(R.id.recycler_item_poster_imagebtn);
+            titleTextView = (TextView) view.findViewById(R.id.recycler_item_poster_title);
+        }
+
+        
     }
 }
