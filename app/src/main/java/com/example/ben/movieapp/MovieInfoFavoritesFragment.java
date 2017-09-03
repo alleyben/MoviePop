@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.example.ben.movieapp.adapters.RecommendationCursorAdapter;
 import com.example.ben.movieapp.adapters.TrailerCursorAdapter;
+import com.example.ben.movieapp.adapters.TrailerListItem;
 import com.example.ben.movieapp.database.DataContract;
 import com.squareup.picasso.Picasso;
 
@@ -263,7 +264,7 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+    public void onLoadFinished(Loader<Cursor> loader, final Cursor data) {
         if (data != null && data.moveToFirst()) {
 
             // Get movie id and run task to get mpaa rating and trailer urls
@@ -392,6 +393,29 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                     if (mTrailerCursorAdapter != null) {
                         Log.d(LOG_TAG, "Trailers Loader ID\nID == " + loader.getId());
                         mTrailerCursorAdapter.swapCursor(data);
+
+                        mTrailerCursorAdapter.setOnItemClickListener(
+                                new TrailerCursorAdapter.OnItemClickListener(){
+                                    @Override
+                                    public void onItemClick(View itemView, int position) {
+                                        TrailerListItem trailerListItem =
+                                                new TrailerListItem().fromCursor(data);
+
+                                        final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
+                                        final String TRAILER_PATH = trailerListItem.getImageUrl();
+
+                                        // example:
+                                        // http://www.youtube.com/watch?v=<trailer path>
+                                        Uri trailerUri = Uri.parse(TRAILER_BASE_URL).buildUpon()
+                                                .appendEncodedPath(TRAILER_PATH)
+                                                .build();
+
+                                        startActivity(
+                                                new Intent(Intent.ACTION_VIEW, trailerUri));
+                                    }
+                                }
+                        );
+
                     } else {
                         Log.e(LOG_TAG, "\nmFavTrailerAdapter is null");
                     }

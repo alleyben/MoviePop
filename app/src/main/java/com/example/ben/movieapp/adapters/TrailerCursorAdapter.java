@@ -19,6 +19,8 @@ public class TrailerCursorAdapter extends CursorRecyclerViewAdapter<TrailerCurso
 
     private static final String LOG_TAG = TrailerCursorAdapter.class.getSimpleName();
     private Context mContext;
+    private OnItemClickListener mListener;
+
 
     public TrailerCursorAdapter(Context context, Cursor cursor){
         super(context,cursor);
@@ -56,16 +58,32 @@ public class TrailerCursorAdapter extends CursorRecyclerViewAdapter<TrailerCurso
         Picasso.with(mContext).load(builtUri).into(posterView);
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public final ImageView posterImageView;
         public final TextView titleTextView;
 
-        public ViewHolder(View view) {
-            super(view);
-            posterImageView = (ImageView) view.findViewById(R.id.recycler_item_poster_imagebtn);
-            titleTextView = (TextView) view.findViewById(R.id.recycler_item_poster_title);
-        }
+        public ViewHolder(final View itemView) {
+            super(itemView);
+            posterImageView = (ImageView) itemView.findViewById(R.id.recycler_item_poster_imagebtn);
+            titleTextView = (TextView) itemView.findViewById(R.id.recycler_item_poster_title);
 
-        
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        mListener.onItemClick(itemView, position);
+                    }
+                }
+            });
+        }
     }
 }
