@@ -38,6 +38,7 @@ public class FrontFragment extends Fragment {
         Bundle args = new Bundle();
         args.putInt(ARG_TAB_NUMBER, tabNumber);
         fragment.setArguments(args);
+        // bundling seems unnecessary, but maybe this keeps the tab number with its instance/object
         return fragment;
     }
 
@@ -46,7 +47,6 @@ public class FrontFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mTabNumber = getArguments().getInt(ARG_TAB_NUMBER);
-            Log.d(LOG_TAG, ARG_TAB_NUMBER + " mTabNumber equals " + mTabNumber);
         }
         setHasOptionsMenu(false);
     }
@@ -102,11 +102,8 @@ public class FrontFragment extends Fragment {
         }
 
         if (sortBy.equals("favorites")) {
-            Log.d(LOG_TAG, "sortBy EQUALS FAVORITE\nwhy did this happen\nmTabNumber equals "
-                    + mTabNumber + "\n");
+            Log.e(LOG_TAG, "sortBy EQUALS FAVORITE\nmTabNumber equals " + mTabNumber);
         } else {
-            Log.d(LOG_TAG, "sortBy EQUAlS " + sortBy +
-                    "\nMovieAdapter and FetchMovieTask initiated\nmTabNumber equals " + mTabNumber);
             gridView.setAdapter(mMovieAdapter);
             FetchMoviesTask fetchMovies = new FetchMoviesTask();
             fetchMovies.execute(sortBy);
@@ -116,9 +113,8 @@ public class FrontFragment extends Fragment {
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // Start MovieInfoActivity to show details for selected movie
                 MovieData movieData = mMovieAdapter.getItem(position);
-                Log.d(LOG_TAG, "ITEM CLICKED at position: " + position +
-                        "\nmovie data sent for: " + movieData.toString());
                 startActivity(
                         new Intent(getActivity(), MovieInfoActivity.class)
                                 .putExtra("movieInfoTag", movieData));

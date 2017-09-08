@@ -9,30 +9,29 @@ import com.example.ben.movieapp.database.DataContract;
 class MovieData implements Parcelable{
 
     String title;
-    String overview;
-    String posterPath;
-    String avgScore;
-    String date;
     String movieId;
-    String[] infoArr;
+    String posterPath;
+//    String overview;
+//    String avgScore;
+//    String date;
 
-    public MovieData(String[] MovieDataArr){
-        this.title = MovieDataArr[0];
-        this.overview = MovieDataArr[1];
-        this.posterPath = MovieDataArr[2];
-        this.avgScore = MovieDataArr[3];
-        this.date = MovieDataArr[4];
-        this.movieId = MovieDataArr[5];
-        this.infoArr = MovieDataArr;
+    public MovieData(String title, String movieId, String posterPath){
+        this.title = title;
+        this.movieId = movieId;
+        this.posterPath = posterPath;
+//        this.title = MovieDataArr[0];
+//        this.overview = MovieDataArr[1];
+//        this.avgScore = MovieDataArr[3];
+//        this.date = MovieDataArr[4];
     }
 
     private MovieData(Parcel in) {
         title = in.readString();
-        overview = in.readString();
-        posterPath = in.readString();
-        avgScore = in.readString();
-        date = in.readString();
         movieId = in.readString();
+        posterPath = in.readString();
+//        overview = in.readString();
+//        avgScore = in.readString();
+//        date = in.readString();
     }
 
     @Override
@@ -40,18 +39,17 @@ class MovieData implements Parcelable{
         return 0;
     }
 
-    public String toString() {return title;}
+//    public String toString() {return title;}
 
     public ContentValues getMovieDataCV() {
 
         ContentValues cv = new ContentValues();
-
         cv.put(DataContract.FavoritesContract.COLUMN_TITLE, title);
-        cv.put(DataContract.FavoritesContract.COLUMN_OVERVIEW, overview);
-        cv.put(DataContract.FavoritesContract.COLUMN_POSTER_URL, posterPath);
-        cv.put(DataContract.FavoritesContract.COLUMN_SCORE, avgScore);
-        cv.put(DataContract.FavoritesContract.COLUMN_DATE, date);
         cv.put(DataContract.FavoritesContract.COLUMN_MOVIE_ID, movieId);
+        cv.put(DataContract.FavoritesContract.COLUMN_POSTER_URL, posterPath);
+//        cv.put(DataContract.FavoritesContract.COLUMN_OVERVIEW, overview);
+//        cv.put(DataContract.FavoritesContract.COLUMN_SCORE, avgScore);
+//        cv.put(DataContract.FavoritesContract.COLUMN_DATE, date);
 
         return cv;
     }
@@ -59,11 +57,11 @@ class MovieData implements Parcelable{
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(title);
-        parcel.writeString(overview);
-        parcel.writeString(posterPath);
-        parcel.writeString(avgScore);
-        parcel.writeString(date);
         parcel.writeString(movieId);
+        parcel.writeString(posterPath);
+//        parcel.writeString(overview);
+//        parcel.writeString(avgScore);
+//        parcel.writeString(date);
     }
 
     public static final Parcelable.Creator<MovieData> CREATOR = new Parcelable.Creator<MovieData>() {

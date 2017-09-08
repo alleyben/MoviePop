@@ -2,18 +2,16 @@ package com.example.ben.movieapp;
 
 /**
  * TODO:
- * tabs to different lists rather than in settings
  * "about" selection in settings to attribute tmdb
  * favorites (save to db)
- * link to rotten tomatoes, metacritic, wikipedia
+ * link to metacritic, wikipedia
  * ratings from those sources
  * accessibility (maybe): descriptions, titles
+ * TODO: add x to top right of infoFrag to go immediately back to front
  */
 
 
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -25,7 +23,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,10 +44,10 @@ public class MainActivity extends AppCompatActivity {
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager) findViewById(R.id.view_pager_container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.main_activity_tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         /*if (savedInstanceState == null) {
@@ -94,10 +91,8 @@ public class MainActivity extends AppCompatActivity {
         public Fragment getItem(int position) {
 
             if (position == 3) {
-                Log.d(LOG_TAG, "\nNew Instance of FAVORITES with position " + position + "\n");
                 return FrontFavoritesFragment.newInstance(position);
             } else {
-                Log.d(LOG_TAG, "\nNew Instance of FrontFragment with position " + position + "\n");
                 return FrontFragment.newInstance(position);
             }
         }
@@ -110,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Log.d(LOG_TAG, "Page position is " + position);
             switch (position) {
                 case 0:
                     return "In Theaters";

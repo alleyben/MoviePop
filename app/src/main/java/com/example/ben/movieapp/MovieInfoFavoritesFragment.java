@@ -26,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ben.movieapp.adapters.RecommendationCursorAdapter;
+import com.example.ben.movieapp.adapters.RecommendationListItem;
 import com.example.ben.movieapp.adapters.TrailerCursorAdapter;
 import com.example.ben.movieapp.adapters.TrailerListItem;
 import com.example.ben.movieapp.database.DataContract;
@@ -53,8 +54,8 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
             DataContract.FavoritesContract._ID,
             DataContract.FavoritesContract.COLUMN_MOVIE_ID,
             DataContract.FavoritesContract.COLUMN_TITLE,
-            DataContract.FavoritesContract.COLUMN_OVERVIEW,
             DataContract.FavoritesContract.COLUMN_POSTER_URL,
+            DataContract.FavoritesContract.COLUMN_OVERVIEW,
             DataContract.FavoritesContract.COLUMN_SCORE,
             DataContract.FavoritesContract.COLUMN_DATE,
             DataContract.FavoritesContract.COLUMN_RATING,
@@ -82,8 +83,8 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
     static final int COL_DETAILS_ROW_ID = 0;
     static final int COL_DETAILS_MOVIE_ID = 1;
     static final int COL_DETAILS_TITLE = 2;
-    static final int COL_DETAILS_OVERVIEW = 3;
-    static final int COL_DETAILS_POSTER_URL = 4;
+    static final int COL_DETAILS_POSTER_URL = 3;
+    static final int COL_DETAILS_OVERVIEW = 4;
     static final int COL_DETAILS_SCORE = 5;
     static final int COL_DETAILS_DATE = 6;
     static final int COL_DETAILS_RATING = 7;
@@ -164,24 +165,6 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
         mRecCursorAdapter = new RecommendationCursorAdapter(getActivity(), null);
         mRecsView.setLayoutManager(recsLayoutManager);
         mRecsView.setAdapter(mRecCursorAdapter);
-
-//        mTrailersView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//
-//                Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-//                if (cursor != null) {
-//                    Uri contentUri = DataContract.FavoritesContract.buildMovieIdUri(
-//                            cursor.getString(COL_DETAILS_MOVIE_ID)//instead (of) get position
-//                            // "content://com.example.ben.moviepop.app.favorites.<movie_id>"
-//                    );
-//                    Log.d(LOG_TAG, "ITEM CLICKED at position: " + position + "\nuri created: " + contentUri.toString());
-//                    Intent intent = new Intent(getActivity(), MovieInfoActivity.class)
-//                            .setData(contentUri);
-//                    startActivity(intent);
-//                }
-//            }
-//        });
 
         return rootView;
     }
@@ -281,16 +264,18 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                     mOverviewView.setText(overview);
 
                     String score = data.getString(COL_DETAILS_SCORE);
-                    String scoreStr = new StringBuilder("User Score:\n")
-                            .append(data.getString(COL_DETAILS_SCORE))
-                            .toString();
-                    mScoreView.setText(scoreStr);
+//                    String scoreStr = new StringBuilder("User Score:\n")
+//                            .append(data.getString(COL_DETAILS_SCORE))
+//                            .toString();
+//                    mScoreView.setText(scoreStr);
+                    mScoreView.setText(score);
 
-                    String date = data.getString(COL_DETAILS_DATE);
-                    String dateStr = new StringBuilder("Release Date:\n")
-                            .append(data.getString(COL_DETAILS_DATE))
-                            .toString();
-                    mDateView.setText(dateStr);
+                    final String date = data.getString(COL_DETAILS_DATE);
+//                    String dateStr = new StringBuilder("Release Date:\n")
+//                            .append(data.getString(COL_DETAILS_DATE))
+//                            .toString();
+//                    mDateView.setText(dateStr);
+                    mDateView.setText(date);
 
                     final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
                     final String SIZE = "w500";
@@ -375,7 +360,7 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                     String[] movieArr =
                             {title, overview, POSTER_PATH, score, date, data.getString(COL_DETAILS_MOVIE_ID)};
 
-                    mMovie = new MovieData(movieArr);
+                    mMovie = new MovieData(title, data.getString(COL_DETAILS_MOVIE_ID), POSTER_PATH);
 
                     mStarFavorite.setOnClickListener(new View.OnClickListener() {
 
@@ -395,7 +380,7 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                         mTrailerCursorAdapter.swapCursor(data);
 
                         mTrailerCursorAdapter.setOnItemClickListener(
-                                new TrailerCursorAdapter.OnItemClickListener(){
+                                new TrailerCursorAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(View itemView, int position) {
                                         TrailerListItem trailerListItem =
@@ -431,7 +416,36 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                         Log.e(LOG_TAG, "\nmFavRecAdapter is null");
                     }
 
-//                    mRecsView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    mRecCursorAdapter.setOnItemClickListener(
+                            new RecommendationCursorAdapter.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(View itemView, int position) {
+//                                    RecommendationListItem recListItem =
+//                                            new RecommendationListItem().fromCursor(data);
+//                                    recListItem.getImageUrl();
+
+                                    String movieId = data.getString(COL_RECOMMENDATIONS_SIMILAR_MOVIE_ID);
+                                    String title = data.getString(COL_RECOMMENDATIONS_SIMILAR_MOVIE_TITLE);
+                                    String posterUrl = data.getString(COL_RECOMMENDATIONS_SIMILAR_MOVIE_POSTER_URL);
+                                    Log.d(LOG_TAG, movieId);
+                                    Uri contentUri = DataContract.RecommendationsContract.buildMovieIdUri(movieId);
+                                    Log.d(LOG_TAG, "Recommendations clicked:\nMovie ID URI: " + contentUri.toString());
+                                    MovieData recMovieData = new MovieData(title, movieId, posterUrl);
+                                    startActivity(
+                                            new Intent(getActivity(), MovieInfoActivity.class)
+                                                    .putExtra("movieInfoTag", recMovieData));
+//                                    Intent intent = new Intent(getActivity(), MovieInfoActivity.class).setData(contentUri);
+//                                    startActivity(intent);
+                                    //TODO same as opening movie from frontFrag
+                                    //not same as opening movie from frontFavFrag
+                                    //need to make movieListItem object
+                                    //delegate more data to be fetched by fetchDetails
+                                    //need to look at json code again
+                                }
+                            }
+                    );
+//                    mRecCursorAdapter.setOnItemClickListener(
+//                            new RecommendationCursorAdapter.OnItemClickListener() {
 //                        @Override
 //                        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
 //
@@ -448,8 +462,8 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 //                            }
 //                        }
 //                    });
-//
-//                    break;
+
+                    break;
 
                 default:
                     Log.e(LOG_TAG, "Loader id not recognized\nID == " + loader.getId());

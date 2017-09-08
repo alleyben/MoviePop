@@ -10,7 +10,7 @@ import com.example.ben.movieapp.database.DataContract.FavoritesContract;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     static final String DATABASE_NAME = "movies.db";
 
     public DatabaseHelper(Context context) {
@@ -30,8 +30,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 FavoritesContract._ID + " INTEGER PRIMARY KEY, " +
                 FavoritesContract.COLUMN_MOVIE_ID + " TEXT UNIQUE NOT NULL, " +
                 FavoritesContract.COLUMN_TITLE + " TEXT NOT NULL, " +
-                FavoritesContract.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
                 FavoritesContract.COLUMN_POSTER_URL + " TEXT NOT NULL, " +
+                FavoritesContract.COLUMN_OVERVIEW + " TEXT NOT NULL, " +
                 FavoritesContract.COLUMN_SCORE + " TEXT NOT NULL, " +
                 FavoritesContract.COLUMN_DATE + " TEXT NOT NULL, " +
                 FavoritesContract.COLUMN_RATING + " TEXT NOT NULL, " + //nullable

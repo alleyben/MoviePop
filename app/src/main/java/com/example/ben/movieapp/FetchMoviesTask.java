@@ -148,12 +148,12 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
     private MovieData[] getMovieDataFromJson(String movieJsonStr) throws JSONException {
 
         final String RESULTS = "results";
-        final String TITLE = "title";
-        final String OVERVIEW = "overview";
-        final String POSTER_URL = "poster_path";
-        final String SCORE = "vote_average";
-        final String DATE = "release_date";
         final String MOVIEID = "id";
+        final String POSTER_URL = "poster_path";
+        final String TITLE = "title";
+//        final String OVERVIEW = "overview";
+//        final String SCORE = "vote_average";
+//        final String DATE = "release_date";
 
 
         JSONObject movieJson = new JSONObject(movieJsonStr);
@@ -164,20 +164,20 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
         for(int i = 0; i < resultMovieArr.length; i++) {
 
             JSONObject movieInfo = movieArray.getJSONObject(i);
-            String movieTitle = movieInfo.getString(TITLE);
-            String movieOverview = movieInfo.getString(OVERVIEW);
-            String moviePosterUrl = movieInfo.getString(POSTER_URL);
-            String movieRating = movieInfo.getString(SCORE);
-            String movieDate = formatDate(movieInfo.getString(DATE));
             String movieId = movieInfo.getString(MOVIEID);
+            String moviePosterUrl = movieInfo.getString(POSTER_URL);
+            String movieTitle = movieInfo.getString(TITLE);
+//            String movieOverview = movieInfo.getString(OVERVIEW);
+//            String movieRating = movieInfo.getString(SCORE);
+//            String movieDate = formatDate(movieInfo.getString(DATE));
 
-            resultMovieArr[i] = new MovieData(new String[] {
-                            movieTitle,
-                            movieOverview,
-                            moviePosterUrl,
-                            movieRating,
-                            movieDate,
-                            movieId});
+            resultMovieArr[i] = new MovieData(movieTitle, movieId, moviePosterUrl);
+//                            movieTitle,
+//                            movieOverview,
+//                            moviePosterUrl,
+//                            movieRating,
+//                            movieDate,
+//                            movieId});
         }
 
         for(MovieData movie : resultMovieArr) {
@@ -208,16 +208,16 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
         mRecommendationsListAdapter = adapter;
     }
 
-    private String formatDate(String jsonDate) {
-        // takes date from api and changes to dot format
-        StringBuilder formattedDate = new StringBuilder();
-        String[] dateArr = jsonDate.split("-");
-        for (int i = 0; i < dateArr.length; i++) {
-            formattedDate.append(dateArr[i]);
-            if (i < dateArr.length-1) {
-                formattedDate.append("•");
-            }
-        }
-        return formattedDate.toString();
-    }
+//    private String formatDate(String jsonDate) {
+//        // takes date from api and changes to dot format
+//        StringBuilder formattedDate = new StringBuilder();
+//        String[] dateArr = jsonDate.split("-");
+//        for (int i = 0; i < dateArr.length; i++) {
+//            formattedDate.append(dateArr[i]);
+//            if (i < dateArr.length-1) {
+//                formattedDate.append("•");
+//            }
+//        }
+//        return formattedDate.toString();
+//    }
 }

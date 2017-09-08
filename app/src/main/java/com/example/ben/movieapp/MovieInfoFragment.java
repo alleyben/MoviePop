@@ -31,7 +31,7 @@ public class MovieInfoFragment extends Fragment {
     private static final String LOG_TAG = MovieInfoFragment.class.getSimpleName();
     private View mRootView;
     private MovieData mMovie;
-    private ContentValues mMovieDataCV;
+//    private ContentValues mMovieDataCV;
     private boolean mIsFavorite;
     private boolean mIsInDatabase;
     private String mFavoritesSelection;
@@ -54,9 +54,9 @@ public class MovieInfoFragment extends Fragment {
 
         ImageView posterView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_poster);
         TextView titleView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_title);
-        TextView overviewView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_overview);
-        TextView scoreView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_avg_score);
-        TextView dateView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_date);
+//        TextView overviewView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_overview);
+//        TextView scoreView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_avg_score);
+//        TextView dateView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_date);
         ImageView imdbImageView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_imdb_button);
         ImageView googleImageView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_google_button);
         ImageView roTomatoesImageView =
@@ -78,6 +78,7 @@ public class MovieInfoFragment extends Fragment {
             // MovieData structure stays intact for now
             FetchDetailsTask detailsTask = new FetchDetailsTask();
             detailsTask.setView(mRootView);
+            detailsTask.setContext(getContext());
             detailsTask.execute(mMovie.movieId);
 
             // get mpaa rating
@@ -87,8 +88,7 @@ public class MovieInfoFragment extends Fragment {
 
             // TODO: make following changes
             //
-            // Get movie trailer urls
-            // also more review scores, google link, share link etc.
+            // more review scores, share link
 
             // Set title
             titleView.setText(mMovie.title);
@@ -108,12 +108,12 @@ public class MovieInfoFragment extends Fragment {
             Picasso.with(super.getContext()).load(builtUri).into(posterView);
 
             // Set details (date, avgScore)
-            String movieDate = new StringBuilder("Release Date:\n").append(mMovie.date).toString();
-            dateView.setText(movieDate);
-            scoreView.setText("User Score:\n" + mMovie.avgScore);
+//            String movieDate = new StringBuilder("Release Date:\n").append(mMovie.date).toString();
+//            dateView.setText(movieDate);
+//            scoreView.setText("User Score:\n" + mMovie.avgScore);
 
             // Set overview
-            overviewView.setText(mMovie.overview);
+//            overviewView.setText(mMovie.overview);
 
             // set imdb button listener
             imdbImageView.setOnClickListener(new View.OnClickListener() {
@@ -274,29 +274,57 @@ public class MovieInfoFragment extends Fragment {
             Log.d(LOG_TAG, mMovie.title + " movie deleted from database");
 
         } else if (!mIsInDatabase && mIsFavorite) {
+
             ContentValues movieInfo = mMovie.getMovieDataCV();
-            // TODO add keys and values to movieCV, then insert: rating, runtime, tagline, genres, imdb_id
+
+//            TODO add keys and values to movieCV, then insert: rating, runtime, tagline, genres, imdb_id
+            // overview, score, date
+            // put this in a utility file and use it for movieInfoFrag and movieInfoFavFrag
+
+            TextView overviewTextView =
+                    (TextView) mRootView.findViewById(R.id.fragment_movie_info_overview);
+            String overview = (String) "" + overviewTextView.getText();
+//            Log.d(LOG_TAG, "Overview: " + overview);
+            // "" is due to text of overview being "SpannableString" whatever that means
+            // ad hoc solution implemented for now; come back later to fix it better
+            movieInfo.put(DataContract.FavoritesContract.COLUMN_OVERVIEW, overview);
+
+            TextView scoreTextView =
+                    (TextView) mRootView.findViewById(R.id.fragment_movie_info_avg_score);
+            String score = (String) scoreTextView.getText();
+            movieInfo.put(DataContract.FavoritesContract.COLUMN_SCORE, score);
+
+            TextView dateTextView =
+                    (TextView) mRootView.findViewById(R.id.fragment_movie_info_date);
+            String date = (String) dateTextView.getText();
+            movieInfo.put(DataContract.FavoritesContract.COLUMN_DATE, date);
+
             TextView ratingTextView =
                     (TextView) mRootView.findViewById(R.id.fragment_movie_info_rating);
             String rating = (String) ratingTextView.getText();
             movieInfo.put(DataContract.FavoritesContract.COLUMN_RATING, rating);
+
             TextView runtimeTextView =
                     (TextView) mRootView.findViewById(R.id.fragment_movie_info_runtime);
             String runtime = (String) runtimeTextView.getText();
             movieInfo.put(DataContract.FavoritesContract.COLUMN_RUNTIME, runtime);
+
             TextView taglineTextView =
                     (TextView) mRootView.findViewById(R.id.fragment_movie_info_tagline);
             String tagline = (String) taglineTextView.getText();
             movieInfo.put(DataContract.FavoritesContract.COLUMN_TAGLINE, tagline);
+
             TextView genresTextView =
                     (TextView) mRootView.findViewById(R.id.fragment_movie_info_genres);
             String genres = (String) genresTextView.getText();
             movieInfo.put(DataContract.FavoritesContract.COLUMN_GENRES, genres);
+
             TextView imdbTextView =
                     (TextView) mRootView.findViewById(R.id.fragment_movie_info_imdb_id);
             String imdbID = (String) imdbTextView.getText();
             movieInfo.put(DataContract.FavoritesContract.COLUMN_IMDB_ID, imdbID);
 
+            // insert movieData via ContentValues to database
             getContext().getContentResolver().insert(
                     DataContract.FavoritesContract.CONTENT_URI, movieInfo);
 
@@ -304,6 +332,7 @@ public class MovieInfoFragment extends Fragment {
             // insert trailers to database
             int trailerCount = mTrailerListAdapter.getItemCount();
             ContentValues[] trailersArr = new ContentValues[trailerCount];
+            // add getCV method to trailerData object
             for (int i = 0; i < trailerCount; i++) {
                 ContentValues trailersCV = new ContentValues();
                 TrailerData td = mTrailerListAdapter.getItem(i);

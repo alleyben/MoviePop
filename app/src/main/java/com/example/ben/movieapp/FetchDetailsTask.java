@@ -1,10 +1,10 @@
 package com.example.ben.movieapp;
 
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.json.JSONArray;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FetchDetailsTask extends AsyncTask<String, Void, List<Map<String, String>>> {
+public class FetchDetailsTask extends AsyncTask<String, Void, Map<String, String>> {
     // TODO fetch details task: youtube trailers, similar movies - list views
     // homepage
     // imdb_id
@@ -34,11 +34,24 @@ public class FetchDetailsTask extends AsyncTask<String, Void, List<Map<String, S
     // rotten tomatoes
     // meta critic
 
+    // new items migrated to fetchDetails rather than fetchMovies:
+    // title, overview, score, date
+
     private static final String LOG_TAG = FetchDetailsTask.class.getSimpleName();
     private View mRootView;
+    private Context mContext;
+    private final String TITLE = "title";
+    private final String OVERVIEW = "overview";
+    private final String SCORE = "vote_average";
+    private final String DATE = "release_date";
+    private final String IMDB_ID = "imdb_id";
+    private final String RUNTIME = "runtime";
+    private final String TAGLINE = "tagline";
+    private final String GENRES = "genres";
+    private final String GENRE_NAME = "name";
 
     @Override
-    protected List<Map<String, String>> doInBackground(String... params) {
+    protected Map<String, String> doInBackground(String... params) {
 
         if (params.length == 0) {
             return null;
@@ -118,68 +131,73 @@ public class FetchDetailsTask extends AsyncTask<String, Void, List<Map<String, S
         return null;
     }
 
-    private List<Map<String, String>> getDetailsFromJson(String movieJsonStr) throws JSONException {
-
-        final String IMDB_ID = "imdb_id";
-        final String RUNTIME = "runtime";
-        final String TAGLINE = "tagline";
-        final String GENRES = "genres";
-        final String GENRE_NAME = "name";
-
+    private Map<String, String> getDetailsFromJson(String movieJsonStr) throws JSONException {
 
         JSONObject detailsJson = new JSONObject(movieJsonStr);
 
+        //title, overview, score date
+
+        String detailsTitle = detailsJson.getString(TITLE);
+        String detailsOverview = detailsJson.getString(OVERVIEW);
+        String detailsScore = detailsJson.getString(SCORE);
+        String detailsDate = formatDate(detailsJson.getString(DATE));
         String detailsImdb_id = detailsJson.getString(IMDB_ID);
         String detailsRuntime = detailsJson.getString(RUNTIME);
         String detailsTagline = detailsJson.getString(TAGLINE);
-
-        StringBuilder genresStr = new StringBuilder();
-        JSONArray genresArr = detailsJson.getJSONArray(GENRES);
-        for (int i = 0; i < genresArr.length(); i++) {
-            JSONObject genresJSON = genresArr.getJSONObject(i);
-            genresStr.append(genresJSON.getString(GENRE_NAME));
-            if (i < genresArr.length()-1) {
-                genresStr.append(" • ");
-            }
-        }
-        String detailsGenres = genresStr.toString();
+        String detailsGenres = formatGenres(detailsJson.getJSONArray(GENRES));
 
         Map<String, String> resultMap = new HashMap();
 
+        resultMap.put(TITLE, detailsTitle);
+        resultMap.put(OVERVIEW, detailsOverview);
+        resultMap.put(SCORE, detailsScore);
+        resultMap.put(DATE, detailsDate);
         resultMap.put(IMDB_ID, detailsImdb_id);
         resultMap.put(RUNTIME, detailsRuntime);
         resultMap.put(GENRES, detailsGenres);
         resultMap.put(TAGLINE, detailsTagline);
 
-        Log.v(LOG_TAG, "Movie entry: " + resultMap.toString());
-
-        List<Map<String, String>> resultList = new ArrayList<>();
-        resultList.add(resultMap);
-
-        return resultList;
+        return resultMap;
     }
 
     @Override
-    protected void onPostExecute(List<Map<String, String>> result) {
+    protected void onPostExecute(Map<String, String> detailsMap) {
 //        super.onPostExecute(stringStringMap);
-        if (result != null) {
+        if (detailsMap != null) {
 //            mDetailsAdapter.clear();
 //            mDetailsAdapter.addAll(result);
-            Map<String, String> detailsMap = result.get(0);
-            Log.v(LOG_TAG, "Results are: " + detailsMap.toString());
-
-            final String IMDB_ID = "imdb_id";
-            final String RUNTIME = "runtime";
-            final String GENRES = "genres";
-            final String TAGLINE = "tagline";
 
             if (mRootView != null) {
+
+                //title, overview, score, date
+
+                TextView title = (TextView) mRootView.findViewById(R.id.fragment_movie_info_title);
+                title.setText(detailsMap.get(TITLE));
+
+                TextView overview = (TextView) mRootView.findViewById(R.id.fragment_movie_info_overview);
+                overview.setText(detailsMap.get(OVERVIEW));
+
+                TextView score = (TextView) mRootView.findViewById(R.id.fragment_movie_info_avg_score);
+                String scoreStr = new StringBuilder("User Score:\n")
+                        .append(detailsMap.get(SCORE))
+                        .toString();
+                score.setText(scoreStr);
+
+                TextView date = (TextView) mRootView.findViewById(R.id.fragment_movie_info_date);
+                String dateStr = new StringBuilder("Release Date:\n")
+                        .append(detailsMap.get(DATE))
+                        .toString();
+                date.setText(dateStr);
 
                 TextView imdbId = (TextView) mRootView.findViewById(R.id.fragment_movie_info_imdb_id);
                 imdbId.setText(detailsMap.get(IMDB_ID));
 
                 TextView runtime = (TextView) mRootView.findViewById(R.id.fragment_movie_info_runtime);
-                runtime.setText(detailsMap.get(RUNTIME) + " minutes");
+                String rawRuntimeStr = detailsMap.get(RUNTIME);
+//                String formattedRuntime = "%s minutes", rawRuntimeStr;
+//                runtime.setText(formattedRuntime);
+                String minutes = mContext.getString(R.string.details_frag_runtime_minutes);
+                runtime.setText(rawRuntimeStr + " " + minutes);
 
                 TextView genres = (TextView) mRootView.findViewById(R.id.fragment_movie_info_genres);
                 genres.setText(detailsMap.get(GENRES));
@@ -195,5 +213,36 @@ public class FetchDetailsTask extends AsyncTask<String, Void, List<Map<String, S
 
     public void setView(View view) {
         mRootView = view;
+    }
+
+    public void setContext(Context context) {
+        mContext = context;
+    }
+
+    private String formatDate(String jsonDate) {
+        // takes date from api and changes to dot format
+        StringBuilder formattedDate = new StringBuilder();
+        String[] dateArr = jsonDate.split("-");
+        for (int i = 0; i < dateArr.length; i++) {
+            formattedDate.append(dateArr[i]);
+            if (i < dateArr.length-1) {
+                formattedDate.append("•");
+            }
+        }
+        return formattedDate.toString();
+    }
+
+    private String formatGenres(JSONArray jsonGenres) throws JSONException{
+        StringBuilder formattedGenres = new StringBuilder();
+        int arrLength = jsonGenres.length();
+        int arrLimit = arrLength - 1;
+        for (int i = 0; i < arrLength; i++) {
+            JSONObject genresJSON = jsonGenres.getJSONObject(i);
+            formattedGenres.append(genresJSON.getString(GENRE_NAME));
+            if (i < arrLimit) {
+                formattedGenres.append(" • ");
+            }
+        }
+        return formattedGenres.toString();
     }
 }

@@ -32,7 +32,7 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
     private static final int FAVORITES_LOADER = 0;
 
     static final int COL_MOVIE_ID = 1;
-    static final int COL_POSTER_URL = 4;
+    static final int COL_POSTER_URL = 3;
     // column indices in order starting with 0:
     // database row id, tmdb movie id, title, overview, poster url, score, date
 
@@ -102,7 +102,7 @@ public class FrontFavoritesFragment extends Fragment implements LoaderManager.Lo
             mFavoritesAdapter = new FavoritesAdapter(getActivity(), null, 0);
             gridView.setAdapter(mFavoritesAdapter);
         } else {
-            Log.e(LOG_TAG, "Whadjyou do?!\nmTabNumber equals " + mTabNumber);
+            Log.e(LOG_TAG, "Whadjyou do?!\nmTabNumber should be 3 but equals " + mTabNumber);
         }
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

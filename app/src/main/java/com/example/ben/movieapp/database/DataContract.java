@@ -26,10 +26,12 @@ public class DataContract {
 
         public static final String TABLE_NAME = "favorites";
 
+        // first three items are in the movieData object
         public static final String COLUMN_MOVIE_ID = "movie_id";
         public static final String COLUMN_TITLE = "title";
-        public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_POSTER_URL = "poster_path";
+        // following must be added to database after fetchDetailsTask completes
+        public static final String COLUMN_OVERVIEW = "overview";
         public static final String COLUMN_SCORE = "vote_average";
         public static final String COLUMN_DATE = "release_date";
         public static final String COLUMN_RATING = "rating";

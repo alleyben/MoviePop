@@ -19,21 +19,11 @@ public class RecommendationCursorAdapter extends CursorRecyclerViewAdapter<Recom
 
     private static final String LOG_TAG = TrailerCursorAdapter.class.getSimpleName();
     private Context mContext;
+    private OnItemClickListener mListener;
 
     public RecommendationCursorAdapter(Context context, Cursor cursor){
         super(context,cursor);
         mContext = context;
-    }
-
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        public final ImageView posterImageView;
-        public final TextView titleTextView;
-
-        public ViewHolder(View view) {
-            super(view);
-            posterImageView = (ImageView) view.findViewById(R.id.recycler_item_poster_imagebtn);
-            titleTextView = (TextView) view.findViewById(R.id.recycler_item_poster_title);
-        }
     }
 
     @Override
@@ -63,5 +53,34 @@ public class RecommendationCursorAdapter extends CursorRecyclerViewAdapter<Recom
         Log.v(LOG_TAG, builtUri.toString());
 
         Picasso.with(mContext).load(builtUri).into(posterView);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        mListener = listener;
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View itemView, int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public final ImageView posterImageView;
+        public final TextView titleTextView;
+
+        public ViewHolder(View view) {
+            super(view);
+            posterImageView = (ImageView) view.findViewById(R.id.recycler_item_poster_imagebtn);
+            titleTextView = (TextView) view.findViewById(R.id.recycler_item_poster_title);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        mListener.onItemClick(itemView, position);
+                    }
+                }
+            });
+        }
     }
 }

@@ -31,4 +31,7 @@
     <string name="upcoming">Coming Soon</string>
     <string name="favorites">Favorites</string>
 
+
+    <string name="details_frag_runtime_minutes" translatable="true">minutes</string>
+
 </resources>
