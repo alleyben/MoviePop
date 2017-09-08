@@ -424,12 +424,13 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 //                                            new RecommendationListItem().fromCursor(data);
 //                                    recListItem.getImageUrl();
 
+                                    data.moveToPosition(position);
                                     String movieId = data.getString(COL_RECOMMENDATIONS_SIMILAR_MOVIE_ID);
                                     String title = data.getString(COL_RECOMMENDATIONS_SIMILAR_MOVIE_TITLE);
                                     String posterUrl = data.getString(COL_RECOMMENDATIONS_SIMILAR_MOVIE_POSTER_URL);
-                                    Log.d(LOG_TAG, movieId);
+                                    Log.d(LOG_TAG, title + "\n");
                                     Uri contentUri = DataContract.RecommendationsContract.buildMovieIdUri(movieId);
-                                    Log.d(LOG_TAG, "Recommendations clicked:\nMovie ID URI: " + contentUri.toString());
+                                    Log.d(LOG_TAG, "Recommendations clicked:\nMovie ID URI:\n" + contentUri.toString());
                                     MovieData recMovieData = new MovieData(title, movieId, posterUrl);
                                     startActivity(
                                             new Intent(getActivity(), MovieInfoActivity.class)

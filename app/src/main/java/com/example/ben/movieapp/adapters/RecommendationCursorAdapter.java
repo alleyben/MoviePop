@@ -30,8 +30,7 @@ public class RecommendationCursorAdapter extends CursorRecyclerViewAdapter<Recom
     public RecommendationCursorAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_item_trailer_and_recs, parent, false);
-        RecommendationCursorAdapter.ViewHolder vh = new RecommendationCursorAdapter.ViewHolder(itemView);
-        return vh;
+        return new RecommendationCursorAdapter.ViewHolder(itemView);
     }
 
     @Override

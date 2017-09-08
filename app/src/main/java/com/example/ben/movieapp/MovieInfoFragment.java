@@ -285,7 +285,8 @@ public class MovieInfoFragment extends Fragment {
                     (TextView) mRootView.findViewById(R.id.fragment_movie_info_overview);
             String overview = (String) "" + overviewTextView.getText();
 //            Log.d(LOG_TAG, "Overview: " + overview);
-            // "" is due to text of overview being "SpannableString" whatever that means
+            // "" is due to text of overview being "SpannableString"
+            // not sure why overview is the only text that is that way
             // ad hoc solution implemented for now; come back later to fix it better
             movieInfo.put(DataContract.FavoritesContract.COLUMN_OVERVIEW, overview);
 
@@ -361,6 +362,8 @@ public class MovieInfoFragment extends Fragment {
             for (int i = 0; i < recCount; i++) {
                 ContentValues recommendationsCV = new ContentValues();
                 MovieData md = mRecAdapter.getItem(i);
+                Log.d(LOG_TAG, "\nrec added to database: " + md.title);
+
                 recommendationsCV.put(
                         DataContract.RecommendationsContract.COLUMN_MOVIE_ID,
                         mMovie.movieId
