@@ -1,4 +1,4 @@
-package com.example.ben.movieapp.adapters;
+package com.example.ben.movieapp.cursorAdapters;
 
 import android.content.Context;
 import android.database.Cursor;

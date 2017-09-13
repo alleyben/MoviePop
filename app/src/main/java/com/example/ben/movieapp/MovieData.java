@@ -6,7 +6,7 @@ import android.os.Parcelable;
 
 import com.example.ben.movieapp.database.DataContract;
 
-class MovieData implements Parcelable{
+public class MovieData implements Parcelable{
 
     String title;
     String movieId;

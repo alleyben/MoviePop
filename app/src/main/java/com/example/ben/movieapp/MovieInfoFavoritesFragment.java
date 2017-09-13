@@ -1,6 +1,5 @@
 package com.example.ben.movieapp;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -20,15 +19,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.ben.movieapp.adapters.RecommendationCursorAdapter;
-import com.example.ben.movieapp.adapters.RecommendationListItem;
-import com.example.ben.movieapp.adapters.TrailerCursorAdapter;
-import com.example.ben.movieapp.adapters.TrailerListItem;
+import com.example.ben.movieapp.cursorAdapters.RecommendationCursorAdapter;
+import com.example.ben.movieapp.cursorAdapters.TrailerCursorAdapter;
+import com.example.ben.movieapp.cursorAdapters.TrailerListItem;
 import com.example.ben.movieapp.database.DataContract;
 import com.squareup.picasso.Picasso;
 

@@ -7,7 +7,7 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:weightSum="1">
 
         <TextView
@@ -52,8 +52,7 @@
                     <TextView
                         android:layout_width="250dp"
                         android:layout_height="wrap_content"
-                        android:id="@+id/fragment_movie_info_tagline"
-                        android:text="No tagline fetched. Set title instead"/>
+                        android:id="@+id/fragment_movie_info_tagline"/>
 
                 </LinearLayout>
 
@@ -172,7 +171,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/fragment_movie_info_imdb_id"
-                android:text="No imdb id fetched"
                 android:visibility="gone"/>
 
             <!-- Trailers and Similar Movies -->

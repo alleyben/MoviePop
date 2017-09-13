@@ -1,8 +1,13 @@
-package com.example.ben.movieapp;
+package com.example.ben.movieapp.fetchers;
 
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.example.ben.movieapp.BuildConfig;
+import com.example.ben.movieapp.MovieData;
+import com.example.ben.movieapp.MoviesAdapter;
+import com.example.ben.movieapp.RecommendationsListAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;

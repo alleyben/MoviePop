@@ -22,6 +22,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.ben.movieapp.database.DataContract;
+import com.example.ben.movieapp.fetchers.FetchDetailsTask;
+import com.example.ben.movieapp.fetchers.FetchMoviesTask;
+import com.example.ben.movieapp.fetchers.FetchRatingTask;
+import com.example.ben.movieapp.fetchers.FetchVideosTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
