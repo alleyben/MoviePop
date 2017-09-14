@@ -99,7 +99,7 @@ public class MovieInfoFragment extends Fragment {
 
             // Set poster image
             final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
-            final String SIZE = "w500";
+            final String SIZE = "w780";
             final String POSTER_PATH = mMovie.posterPath;
 
             Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon()

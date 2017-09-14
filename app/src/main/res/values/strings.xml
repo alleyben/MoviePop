@@ -31,7 +31,8 @@
     <string name="upcoming">Coming Soon</string>
     <string name="favorites">Favorites</string>
 
-
     <string name="details_frag_runtime_minutes" translatable="true">minutes</string>
+    <string name="details_frag_trailers" translatable="true">Trailers:</string>
+    <string name="details_frag_recommendations" translatable="true">You might also like:</string>
 
 </resources>

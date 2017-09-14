@@ -2,13 +2,12 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorPrimaryDark">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:weightSum="1">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="match_parent"
@@ -19,62 +18,71 @@
             android:textSize="20sp"
             android:textColor="@color/colorTitle"
             android:fontFamily="@string/app_font"
-            android:shadowColor="@color/colorAccent"
-            android:background="@color/colorPrimaryDark"/>
+            android:shadowColor="@color/colorAccent"/>
 
+        <!--body-->
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:padding="10dp"
-            android:layout_weight="1"
             android:orientation="vertical"
             android:background="@color/colorPrimaryDark">
 
+            <!--above the fold-->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:weightSum="1">
 
+                <!--left side-->
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.7"
                     android:orientation="vertical">
 
                     <!-- Poster and Tagline -->
+                    <!--previous width: 270dp height: 300dp-->
                     <ImageView
-                        android:layout_width="270dp"
-                        android:layout_height="300dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
                         android:id="@+id/fragment_movie_info_poster"
                         android:contentDescription="@string/app_name"/>
 
                     <TextView
-                        android:layout_width="250dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
                         android:id="@+id/fragment_movie_info_tagline"/>
 
                 </LinearLayout>
 
+                <!--right side-->
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.3"
                     android:orientation="vertical">
 
                     <!-- Header: Rating, Runtime, Favorite Star, Release Date, User Score -->
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/fragment_movie_info_rating"
-                        android:text="No Yet Rated"/>
+                        android:layout_gravity="center"
+                        android:layout_margin="16dp"
+                        android:textSize="22sp"
+                        android:padding="5dp"
+                        android:id="@+id/fragment_movie_info_rating"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@+id/fragment_movie_info_runtime"
-                        android:text="0 min"/>
+                        android:layout_gravity="center"
+                        android:textAlignment="center"
+                        android:id="@+id/fragment_movie_info_runtime"/>
 
                     <CheckBox
                         android:id="@+id/star_button"
@@ -108,15 +116,15 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/fragment_movie_info_genres"
-                android:text="No genres fetched"/>
+                android:layout_gravity="center"
+                android:layout_margin="10dp"
+                android:id="@+id/fragment_movie_info_genres"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/fragment_movie_info_overview"
                 android:padding="10dp"
-                android:layout_margin="10dp"
                 android:textIsSelectable="true" />
 
             <LinearLayout
@@ -177,10 +185,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Trailers:"
+                android:text="@string/details_frag_trailers"
                 android:gravity="center"
                 android:padding="3dp"
-                android:layout_margin="3dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="3dp"
                 android:background="@color/colorAccent"/>
 
             <android.support.v7.widget.RecyclerView
@@ -191,10 +200,11 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="You might also like:"
+                android:text="@string/details_frag_recommendations"
                 android:gravity="center"
                 android:padding="3dp"
-                android:layout_margin="3dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginBottom="3dp"
                 android:background="@color/colorAccent"/>
 
             <android.support.v7.widget.RecyclerView

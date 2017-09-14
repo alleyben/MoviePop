@@ -275,7 +275,7 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                     mDateView.setText(date);
 
                     final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
-                    final String SIZE = "w500";
+                    final String SIZE = "w780";
                     final String POSTER_PATH = data.getString(COL_DETAILS_POSTER_URL);
 
                     Uri builtUri = Uri.parse(POSTER_BASE_URL).buildUpon()
