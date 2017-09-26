@@ -151,6 +151,16 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
         mTrailersView = (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_yt_videos);
         mRecsView = (RecyclerView) rootView.findViewById(R.id.fragment_movie_info_movie_recs);
 
+        ImageView closeBtnView = (ImageView) rootView.findViewById(R.id.fragment_movie_info_close_button);
+        closeBtnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                getFragmentManager().popBackStack();
+//                getFragmentManager().beginTransaction().remove(getContext()).commit();
+                startActivity(new Intent(getContext(), MainActivity.class));
+            }
+        });
+
 
         LinearLayoutManager trailersLayoutManager =
                 new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);

@@ -2,6 +2,7 @@ package com.example.ben.movieapp;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -50,7 +51,14 @@ public class MoviesAdapter extends ArrayAdapter<MovieData> {
         Log.v(LOG_TAG, builtUri.toString());
 
         if (posterView != null) {
+//            Picasso.with(super.getContext()).load(R.drawable.ic_no_image_available);
             Picasso.with(super.getContext()).load(builtUri).into(posterView);
+//            if (posterView.getDrawable() == null) {
+//                posterView.setImageDrawable(android.R.drawable.screen_background_light_transparent);
+//                Drawable transDraw = super.getContext().getResources().getDrawable(android.R.drawable.screen_background_light_transparent);
+//                Drawable noImageDraw = super.getContext().getResources().getDrawable(R.drawable.ic_no_image_available);
+//                posterView.setImageDrawable(noImageDraw);
+//            }
         }
 
         return convertView;

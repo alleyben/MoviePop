@@ -2,12 +2,11 @@ package com.example.ben.movieapp;
 
 /**
  * TODO:
- * "about" selection in settings to attribute tmdb
- * favorites (save to db)
+ * "about" selection in settings to attribute tmdb,
  * link to metacritic, wikipedia
  * ratings from those sources
  * accessibility (maybe): descriptions, titles
- * TODO: add x to top right of infoFrag to go immediately back to front
+ * TODO: add x to top right of infoFrag to go immediately back to front, toast message offline, no image image, edit settings activity and menu
  */
 
 

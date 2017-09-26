@@ -58,9 +58,6 @@ public class MovieInfoFragment extends Fragment {
 
         ImageView posterView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_poster);
         TextView titleView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_title);
-//        TextView overviewView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_overview);
-//        TextView scoreView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_avg_score);
-//        TextView dateView = (TextView) mRootView.findViewById(R.id.fragment_movie_info_date);
         ImageView imdbImageView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_imdb_button);
         ImageView googleImageView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_google_button);
         ImageView roTomatoesImageView =
@@ -71,15 +68,22 @@ public class MovieInfoFragment extends Fragment {
                 (RecyclerView) mRootView.findViewById(R.id.fragment_movie_info_movie_recs);
         CheckBox starFavorite = (CheckBox) mRootView.findViewById(R.id.star_button);
 
+        // close button to return straight to main menu instead of going back through every movie info frag
+        ImageView closeBtnView = (ImageView) mRootView.findViewById(R.id.fragment_movie_info_close_button);
+        closeBtnView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getContext(), MainActivity.class));
+            }
+        });
+
 
         Intent intent = getActivity().getIntent();
 
         if (intent != null && intent.hasExtra("movieInfoTag")) {
             mMovie = intent.getParcelableExtra("movieInfoTag");
 
-            // get imdb, runtime, genres, tagline
-            // decided not to move fetching of all details here in order to space out fetching
-            // MovieData structure stays intact for now
+            // get overview, user score avg, release date, imdb id, runtime, genres, tagline
             FetchDetailsTask detailsTask = new FetchDetailsTask();
             detailsTask.setView(mRootView);
             detailsTask.setContext(getContext());
