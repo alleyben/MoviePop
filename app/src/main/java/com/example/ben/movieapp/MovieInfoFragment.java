@@ -35,7 +35,6 @@ public class MovieInfoFragment extends Fragment {
     private static final String LOG_TAG = MovieInfoFragment.class.getSimpleName();
     private View mRootView;
     private MovieData mMovie;
-//    private ContentValues mMovieDataCV;
     private boolean mIsFavorite;
     private boolean mIsInDatabase;
     private String mFavoritesSelection;
@@ -47,7 +46,7 @@ public class MovieInfoFragment extends Fragment {
 
 
     public MovieInfoFragment() {
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(false);
     }
 
     @Override
@@ -94,10 +93,6 @@ public class MovieInfoFragment extends Fragment {
             ratingTask.setView(mRootView);
             ratingTask.execute(mMovie.movieId);
 
-            // TODO: make following changes
-            //
-            // more review scores, share link
-
             // Set title
             titleView.setText(mMovie.title);
 
@@ -114,14 +109,6 @@ public class MovieInfoFragment extends Fragment {
             Log.d(LOG_TAG, builtUri.toString());
 
             Picasso.with(super.getContext()).load(builtUri).into(posterView);
-
-            // Set details (date, avgScore)
-//            String movieDate = new StringBuilder("Release Date:\n").append(mMovie.date).toString();
-//            dateView.setText(movieDate);
-//            scoreView.setText("User Score:\n" + mMovie.avgScore);
-
-            // Set overview
-//            overviewView.setText(mMovie.overview);
 
             // set imdb button listener
             imdbImageView.setOnClickListener(new View.OnClickListener() {
@@ -285,10 +272,6 @@ public class MovieInfoFragment extends Fragment {
 
             ContentValues movieInfo = mMovie.getMovieDataCV();
 
-//            TODO add keys and values to movieCV, then insert: rating, runtime, tagline, genres, imdb_id
-            // overview, score, date
-            // put this in a utility file and use it for movieInfoFrag and movieInfoFavFrag
-
             TextView overviewTextView =
                     (TextView) mRootView.findViewById(R.id.fragment_movie_info_overview);
             String overview = (String) "" + overviewTextView.getText();
@@ -394,30 +377,6 @@ public class MovieInfoFragment extends Fragment {
             getContext().getContentResolver().bulkInsert(
                     DataContract.RecommendationsContract.CONTENT_URI, recsArr);
         }
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_movie_info, menu);
-
-        MenuItem item = menu.findItem(R.id.action_share);
-
-        ShareActionProvider mShareActionProvider =
-                (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(createShareMovieIntent());
-        } else {
-            Log.d(LOG_TAG, "Share action provider is null");
-        }
-    }
-
-    private Intent createShareMovieIntent() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mMovie.title);
-        return shareIntent;
     }
 }
 

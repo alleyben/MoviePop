@@ -155,8 +155,6 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
         closeBtnView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                getFragmentManager().popBackStack();
-//                getFragmentManager().beginTransaction().remove(getContext()).commit();
                 startActivity(new Intent(getContext(), MainActivity.class));
             }
         });
@@ -174,31 +172,6 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
         mRecsView.setAdapter(mRecCursorAdapter);
 
         return rootView;
-    }
-
-    @Override
-    public void onCreateOptionsMenu (Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.menu_movie_info, menu);
-
-        MenuItem item = menu.findItem(R.id.action_share);
-
-        ShareActionProvider mShareActionProvider =
-                (ShareActionProvider) MenuItemCompat.getActionProvider(item);
-
-        if (mShareActionProvider != null) {
-            mShareActionProvider.setShareIntent(createShareMovieIntent());
-        } else {
-            Log.d(LOG_TAG, "Share action provider is null");
-        }
-    }
-
-    private Intent createShareMovieIntent() {
-        Log.d(LOG_TAG, "createShareMovieIntent initiated");
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, mMovie.title);
-        return shareIntent;
     }
 
     @Override
@@ -259,8 +232,8 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
 
             // Get movie id and run task to get mpaa rating and trailer urls
             // also more review scores, google link, share link etc.
-            // FetchMovieDetailsTask fetchMovies = new FetchMovieDetailsTask();
-            // fetchMovies.execute(mMovie.movieId);
+
+            // On load finished for three different loaders
 
             switch (loader.getId()) {
                 case DETAILS_LOADER:
@@ -271,17 +244,9 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                     mOverviewView.setText(overview);
 
                     String score = data.getString(COL_DETAILS_SCORE);
-//                    String scoreStr = new StringBuilder("User Score:\n")
-//                            .append(data.getString(COL_DETAILS_SCORE))
-//                            .toString();
-//                    mScoreView.setText(scoreStr);
                     mScoreView.setText(score);
 
                     final String date = data.getString(COL_DETAILS_DATE);
-//                    String dateStr = new StringBuilder("Release Date:\n")
-//                            .append(data.getString(COL_DETAILS_DATE))
-//                            .toString();
-//                    mDateView.setText(dateStr);
                     mDateView.setText(date);
 
                     final String POSTER_BASE_URL = "http://image.tmdb.org/t/p/";
@@ -390,8 +355,7 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                                 new TrailerCursorAdapter.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(View itemView, int position) {
-                                        TrailerListItem trailerListItem =
-                                                new TrailerListItem().fromCursor(data);
+                                        TrailerListItem trailerListItem = TrailerListItem.fromCursor(data);
 
                                         final String TRAILER_BASE_URL = "http://www.youtube.com/watch?v=";
                                         final String TRAILER_PATH = trailerListItem.getImageUrl();
@@ -427,10 +391,8 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                             new RecommendationCursorAdapter.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(View itemView, int position) {
-//                                    RecommendationListItem recListItem =
-//                                            new RecommendationListItem().fromCursor(data);
-//                                    recListItem.getImageUrl();
 
+                                    // move cursor to position of click to extract from database
                                     data.moveToPosition(position);
                                     String movieId = data.getString(COL_RECOMMENDATIONS_SIMILAR_MOVIE_ID);
                                     String title = data.getString(COL_RECOMMENDATIONS_SIMILAR_MOVIE_TITLE);
@@ -442,35 +404,9 @@ public class MovieInfoFavoritesFragment extends Fragment implements LoaderManage
                                     startActivity(
                                             new Intent(getActivity(), MovieInfoActivity.class)
                                                     .putExtra("movieInfoTag", recMovieData));
-//                                    Intent intent = new Intent(getActivity(), MovieInfoActivity.class).setData(contentUri);
-//                                    startActivity(intent);
-                                    //TODO same as opening movie from frontFrag
-                                    //not same as opening movie from frontFavFrag
-                                    //need to make movieListItem object
-                                    //delegate more data to be fetched by fetchDetails
-                                    //need to look at json code again
                                 }
                             }
                     );
-//                    mRecCursorAdapter.setOnItemClickListener(
-//                            new RecommendationCursorAdapter.OnItemClickListener() {
-//                        @Override
-//                        public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-//
-//                            Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
-//                            if (cursor != null) {
-//                                Uri contentUri = DataContract.FavoritesContract.buildMovieIdUri(
-//                                        cursor.getString(COL_DETAILS_MOVIE_ID)//instead (of) get position
-//                                        // "content://com.example.ben.moviepop.app.favorites.<movie_id>"
-//                                );
-//                                Log.d(LOG_TAG, "ITEM CLICKED at position: " + position + "\nuri created: " + contentUri.toString());
-//                                Intent intent = new Intent(getActivity(), MovieInfoActivity.class)
-//                                        .setData(contentUri);
-//                                startActivity(intent);
-//                            }
-//                        }
-//                    });
-
                     break;
 
                 default:
