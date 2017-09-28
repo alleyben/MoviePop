@@ -44,7 +44,7 @@ public class FetchMoviesTask extends AsyncTask<String, Void, MovieData[]> {
         final String PLAYING = "now_playing";
         final String RATING = "top_rated";
         final String UPCOMING = "upcoming";
-        final String RECOMMENDATIONS = "similar"; // or "recommendations"
+        final String RECOMMENDATIONS = "recommendations"; // or "recommendations"
 
         String sortBy;
 
