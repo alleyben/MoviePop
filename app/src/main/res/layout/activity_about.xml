@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:textSize="18sp"
-        android:text="MoviePop created by Ben Alley under the Apache license."/>
+        android:text="MoviePop created by Ben Alley under the Apache license 2.0."/>
 
     <TextView
         android:layout_width="match_parent"
