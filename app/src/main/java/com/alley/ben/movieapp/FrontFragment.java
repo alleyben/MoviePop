@@ -1,4 +1,4 @@
-package com.example.ben.movieapp;
+package com.alley.ben.movieapp;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.example.ben.movieapp.fetchers.FetchMoviesTask;
+import com.alley.ben.movieapp.fetchers.FetchMoviesTask;
 
 import java.util.ArrayList;
 

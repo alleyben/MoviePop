@@ -1,4 +1,4 @@
-package com.example.ben.movieapp;
+package com.alley.ben.movieapp;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 
-import com.example.ben.movieapp.database.DataContract;
+import com.alley.ben.movieapp.database.DataContract;
 
 public class FrontFavoritesFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 

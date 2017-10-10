@@ -31,36 +31,58 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
         android:layout_margin="16dp"
         android:textSize="18sp"
-        android:text="MoviePop created by Ben Alley under the Apache license 2.0."/>
+        android:text="@string/about_blurb"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
-        android:text="~~~~~~~~~~~~~~~~~~~~~~~~"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textSize="18sp"
-        android:text="MoviePop utilizes tmdb.org api."/>
+        android:text="@string/about_page_border"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textAlignment="center"
-        android:text="~~~~~~~~~~~~~~~~~~~~~~~~"/>
+        android:layout_margin="16dp"
+        android:textSize="18sp"
+        android:text="@string/about_tmdb_blurb"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:text="@string/about_page_border"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
         android:layout_margin="16dp"
         android:textSize="18sp"
-        android:text="For suggested improvements, commissions, or job offers, contact mugalym.apps@gmail.com."/>
+        android:text="@string/about_gnome_icon_blurb"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:text="@string/about_page_border"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textAlignment="center"
+        android:layout_margin="16dp"
+        android:textSize="18sp"
+        android:text="@string/about_contact_blurb"/>
 
 </LinearLayout>

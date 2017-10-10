@@ -15,7 +15,7 @@
  *
  */
 
-package com.example.ben.movieapp.cursorAdapters;
+package com.alley.ben.movieapp.cursorAdapters;
 
 import android.content.Context;
 import android.database.Cursor;

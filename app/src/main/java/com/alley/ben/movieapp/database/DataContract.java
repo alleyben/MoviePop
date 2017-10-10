@@ -1,4 +1,4 @@
-package com.example.ben.movieapp.database;
+package com.alley.ben.movieapp.database;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;

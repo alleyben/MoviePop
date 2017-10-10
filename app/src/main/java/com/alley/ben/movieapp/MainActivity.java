@@ -1,4 +1,4 @@
-package com.example.ben.movieapp;
+package com.alley.ben.movieapp;
 
 /**
  * TODO:
@@ -19,7 +19,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 

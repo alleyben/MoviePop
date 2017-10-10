@@ -1,4 +1,4 @@
-package com.example.ben.movieapp;
+package com.alley.ben.movieapp;
 
 import android.content.Context;
 import android.net.Uri;

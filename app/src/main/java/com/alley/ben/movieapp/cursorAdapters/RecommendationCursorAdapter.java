@@ -1,4 +1,4 @@
-package com.example.ben.movieapp.cursorAdapters;
+package com.alley.ben.movieapp.cursorAdapters;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.ben.movieapp.R;
+import com.alley.ben.movieapp.R;
 import com.squareup.picasso.Picasso;
 
 public class RecommendationCursorAdapter extends CursorRecyclerViewAdapter<RecommendationCursorAdapter.ViewHolder> {

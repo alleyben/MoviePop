@@ -26,13 +26,22 @@
 
     <string name="app_font">sans-serif</string>
 
-    <string name="trending">Trending</string>
-    <string name="top_rated">Highest Rated</string>
-    <string name="upcoming">Coming Soon</string>
-    <string name="favorites">Favorites</string>
+    <string name="tab_title_trending" translatable="true">Trending</string>
+    <string name="tab_title_top_rated" translatable="true">Highest Rated</string>
+    <string name="tab_title_upcoming" translatable="true">Coming Soon</string>
+    <string name="tab_title_favorites" translatable="true">Favorites</string>
 
     <string name="details_frag_runtime_minutes" translatable="true">minutes</string>
     <string name="details_frag_trailers" translatable="true">Trailers:</string>
     <string name="details_frag_recommendations" translatable="true">You might also like:</string>
+
+    <string name="about_page_border" translatable="false">~~~~~~~~~~~~~~~~~~~~~~~~</string>
+    <string name="about_blurb" translatable="true">MoviePop created by Ben Alley under the Apache
+        license 2.0.</string>
+    <string name="about_tmdb_blurb" translatable="false">MoviePop utilizes tmdb.org api.</string>
+    <string name="about_gnome_icon_blurb" translatable="true">The icon for MoviePop is the generic
+        Gnome video icon used under the GNU Lesser General Public License.</string>
+    <string name="about_contact_blurb" translatable="true">For suggested improvements, commissions,
+        or job offers, contact mugalym.apps@gmail.com.</string>
 
 </resources>

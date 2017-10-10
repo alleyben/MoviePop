@@ -1,8 +1,8 @@
-package com.example.ben.movieapp.cursorAdapters;
+package com.alley.ben.movieapp.cursorAdapters;
 
 import android.database.Cursor;
 
-import com.example.ben.movieapp.MovieInfoFavoritesFragment;
+import com.alley.ben.movieapp.MovieInfoFavoritesFragment;
 
 public class TrailerListItem {
     private String title;

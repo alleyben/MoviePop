@@ -1,10 +1,10 @@
-package com.example.ben.movieapp;
+package com.alley.ben.movieapp;
 
 import android.content.ContentValues;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.ben.movieapp.database.DataContract;
+import com.alley.ben.movieapp.database.DataContract;
 
 public class MovieData implements Parcelable{
 
